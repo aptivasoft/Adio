@@ -1,0 +1,57 @@
+﻿using System;
+using System.Collections;
+using System.Configuration;
+using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.Security;
+using System.Web.UI;
+using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Xml.Linq;
+
+public partial class Patient_TimeSheetDetails : System.Web.UI.Page
+{
+    TimeSheetDAL TS_Data = new TimeSheetDAL();
+    TimeSheetDetails TS_Det = new TimeSheetDetails();
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (Session["User"] == null || Session["Role"] == null)
+            Response.Redirect("../Login.aspx");
+
+        if (!IsPostBack)
+        {
+            BindDateAndDay();
+        }
+    }
+    //getEmpTimeSheetDetails
+    public void BindDateAndDay()
+    {
+        TS_Det.User_ID = (string)Session["User"];
+        TS_Det.EMP_ID = TS_Data.GetEmpID(TS_Det);
+
+        DataTable dt_EmpData = TS_Data.GetEmpDetails(TS_Det);
+
+        lblempName1.Text = dt_EmpData.Rows[0]["Emp_LName"].ToString() + "," + dt_EmpData.Rows[0]["Emp_FName"].ToString();
+        lblPhone1.Text = dt_EmpData.Rows[0]["Emp_Phone"].ToString();
+        lblMailId1.Text = dt_EmpData.Rows[0]["Emp_Email"].ToString();
+        TimeSheetDetails TS_Det1 = new TimeSheetDetails();
+        TS_Det1.EMP_ID = int.Parse(dt_EmpData.Rows[0]["Emp_SupID1"].ToString());
+        lblSupervisor1.Text = (TS_Data.GetEmpDetails(TS_Det)).Rows[0]["Emp_LName"].ToString() + "," + dt_EmpData.Rows[0]["Emp_FName"].ToString();
+        TS_Det.LocID = int.Parse(dt_EmpData.Rows[0]["Emp_LocID"].ToString());
+        lblLocation1.Text = TS_Data.GetLocation(TS_Det);
+
+        if (TS_Data.getEmpTimeSheetDetails(TS_Det).Rows.Count > 0)
+        {
+            gridEmpTSdetails.DataSource = TS_Data.getEmpTimeSheetDetails(TS_Det);
+            gridEmpTSdetails.DataBind();
+        }        
+    }
+    protected void CreateOrAddTimeSheet(object sender, GridViewCommandEventArgs e)
+    {
+        int index = Convert.ToInt32(e.CommandArgument);
+        int Row = Convert.ToInt32(e.CommandArgument);
+        Response.Redirect("Timesheet.aspx?PPID=" + Convert.ToInt32(e.CommandArgument));        
+    }
+}

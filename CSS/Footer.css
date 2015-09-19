@@ -1,0 +1,22 @@
+
+.footer_info{
+width: 100%; 
+height:24px;
+padding: 2px; 
+border-collapse:collapse;
+font-family : Arial, Helvetica, Verdana, sans-serif;
+}
+
+.footer_info_td  { 
+background-color: #4f81bc; 
+text-align: right; 
+color:#FFFFFF;
+font-size: 12px; 
+font-family : Arial, Helvetica, Verdana, sans-serif;
+border-collapse:collapse;
+padding: 2px; 
+font-weight: bold; 
+} 
+
+
+

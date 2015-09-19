@@ -1,0 +1,111 @@
+﻿.blue .ajax__tab_header 
+{
+	color:#fff;
+}
+.blue .ajax__tab_outer
+{
+    background:url(../img/blue_left.gif) no-repeat 0px 0px;
+}
+.blue .ajax__tab_inner
+{
+    background:url(../img/blue_right.gif) no-repeat 100% 0px;
+}
+.blue .ajax__tab_hover .ajax__tab_outer
+{
+    background:url(../img/blue_left.gif) no-repeat 0px -150px;
+}
+.blue .ajax__tab_hover .ajax__tab_inner
+{
+    background:url(../img/blue_right.gif) no-repeat 100% -150px;
+}
+.blue .ajax__tab_active .ajax__tab_outer
+{
+    background:url(../img/blue_left.gif) no-repeat 0px -300px;
+}
+.blue .ajax__tab_active .ajax__tab_inner
+{
+    background:url(../img/blue_right.gif) no-repeat 100% -300px;
+}
+
+.gray .ajax__tab_header 
+{
+	color:#fff;
+}
+.gray .ajax__tab_outer
+{
+    background:url(../img/gray_left.gif) no-repeat 0px 0px;
+}
+.gray .ajax__tab_inner
+{
+    background:url(../img/gray_right.gif) no-repeat 100% 0px;
+}
+.gray .ajax__tab_hover .ajax__tab_outer
+{
+    background:url(../img/gray_left.gif) no-repeat 0px -150px;
+}
+.gray .ajax__tab_hover .ajax__tab_inner
+{
+    background:url(../img/gray_right.gif) no-repeat 100% -150px;
+}
+.gray .ajax__tab_active .ajax__tab_outer
+{
+    background:url(../img/gray_left.gif) no-repeat 0px -300px;
+}
+.gray .ajax__tab_active .ajax__tab_inner
+{
+    background:url(../img/gray_right.gif) no-repeat 100% -300px;
+}
+
+.mixed .ajax__tab_header 
+{
+	color:#fff;
+}
+.mixed .gray .ajax__tab_outer
+{
+    background:url(../img/gray_left.gif) no-repeat 0px 0px;
+}
+.mixed .gray .ajax__tab_inner
+{
+    background:url(../img/gray_right.gif) no-repeat 100% 0px;
+}
+.mixed .gray .ajax__tab_hover .ajax__tab_outer
+{
+    background:url(../img/gray_left.gif) no-repeat 0px -150px;
+}
+.mixed .gray .ajax__tab_hover .ajax__tab_inner
+{
+    background:url(../img/gray_right.gif) no-repeat 100% -150px;
+}
+.mixed .gray .ajax__tab_active .ajax__tab_outer
+{
+    background:url(../img/gray_left.gif) no-repeat 0px -300px;
+}
+.mixed .gray .ajax__tab_active .ajax__tab_inner
+{
+    background:url(../img/gray_right.gif) no-repeat 100% -300px;
+}
+.mixed .blue .ajax__tab_outer
+{
+    background:url(../img/blue_left.gif) no-repeat 0px 0px;
+}
+.mixed .blue .ajax__tab_inner
+{
+    background:url(../img/blue_right.gif) no-repeat 100% 0px;
+}
+.mixed .blue .ajax__tab_hover .ajax__tab_outer
+{
+    background:url(../img/blue_left.gif) no-repeat 0px -150px;
+}
+.mixed .blue .ajax__tab_hover .ajax__tab_inner
+{
+    background:url(../img/blue_right.gif) no-repeat 100% -150px;
+}
+.mixed .blue .ajax__tab_active .ajax__tab_outer
+{
+    background:url(../img/blue_left.gif) no-repeat 0px -300px;
+}
+.mixed .blue .ajax__tab_active .ajax__tab_inner
+{
+    background:url(../img/blue_right.gif) no-repeat 100% -300px;
+}
+

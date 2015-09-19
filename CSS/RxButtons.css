@@ -1,0 +1,17 @@
+
+.rxbutton_info{
+width: 100%; 
+height:1px;
+border: 1px solid #FFFFFF;
+border-collapse:collapse;
+font-family : Arial, Helvetica, Verdana, sans-serif;
+vertical-align:middle;
+}
+
+.rxbutton_info td{ 
+
+background-color: #BED9EC; 
+vertical-align: middle; 
+text-align:center;
+
+}

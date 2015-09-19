@@ -1,0 +1,6 @@
+.tip {font-family : Arial, Helvetica, Verdana, sans-serif; border:solid 1px #666666; width:250px; 
+      padding:1px; position:absolute; z-index:100; visibility:hidden; color:#333333;
+      top:20px; left:90px; background-color: #BED9EC; font-weight:normal;  }
+#t1 {width:130px;}
+#t2 {width:480px;}
+#t3 {font-family : Arial, Helvetica, Verdana, sans-serif; background-color:#e2edf5;}

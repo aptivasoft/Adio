@@ -1,0 +1,83 @@
+﻿<%@ Page Language="C#" MasterPageFile="~/Templates/eCareXMaster.master" AutoEventWireup="true" CodeFile="SampleRequestQueue.aspx.cs" Inherits="RxRequestQueue" Title="eCarex Health Care System" %>
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server"></asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+<table  align="center"  width="850px" class="patient_info">
+        <tr class="medication_info_th1">
+             <td align="center"  colspan="4" style="height:25px;vertical-align:middle;"  > <asp:Label ID="lblHeading" runat="server" Text=""></asp:Label>
+             </td>
+        </tr>
+        <tr class="medication_info_tr-odd">
+          <td align="left" colspan="4" ><asp:Label ID="lblsortby" runat="server" Text="Sort By :"></asp:Label>&nbsp;&nbsp;
+            <asp:RadioButton ID="rbtnShowAll" runat="server" GroupName="pMsg" Text="Date" AutoPostBack="true"  Checked OnCheckedChanged="radio_CheckChanged"/>&nbsp;&nbsp;
+            <asp:RadioButton ID="rbtnFacility" runat="server" GroupName="pMsg" Text="Facility" AutoPostBack="true"  OnCheckedChanged="radio_CheckChanged"/>&nbsp;&nbsp;
+            <asp:RadioButton ID="rbtnDoctor" runat="server" GroupName="pMsg" Text="Doctor" AutoPostBack="true" OnCheckedChanged="radio_CheckChanged"/>&nbsp;&nbsp;
+            <asp:RadioButton ID="rbtnDateRange" runat="server" GroupName="pMsg" Text="Selected Date Range" AutoPostBack="true" OnCheckedChanged="radio_CheckChanged" Visible="false"/>
+            <br />
+            <asp:Panel ID="pnlDateSelect" runat="server" Visible="false">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start Date : &nbsp;&nbsp;
+            <asp:TextBox ID="txtSDate" runat="server" Columns="10" MaxLength="10"></asp:TextBox>&nbsp;(MM/DD/YYYY)&nbsp;
+            End Date : &nbsp;&nbsp;
+            <asp:TextBox ID="txtEDate" runat="server" Columns="10" MaxLength="10"></asp:TextBox>&nbsp;(MM/DD/YYYY)&nbsp;<asp:Button ID="btnReport"
+            runat="server" Text="Report"/>&nbsp;<asp:Label ID="lblerror" runat="server" Text="Enter Proper Date Formats" ForeColor="Red"></asp:Label>
+         </asp:Panel>
+            </td>
+            </tr>
+            <tr class="medication_info_tr-even">
+            <td align="center" colspan="4" >
+                <asp:GridView ID="gridRxRequestQueue" runat="server" AutoGenerateColumns="False" 
+                     Width="850px" AllowSorting="true"  OnRowCommand="gridRxRequestQueue_RowCommand" EmptyDataText="No Records Found..."  >
+                       <Columns>
+                            <asp:TemplateField HeaderText="Clinic" ItemStyle-HorizontalAlign="Left" Visible="false" >
+                            <ItemTemplate>
+                                <asp:Label ID="lblClinic_Name" runat="server" Text='<%#Eval("Clinic_Name")%>'></asp:Label>
+                            </ItemTemplate>                        
+                       </asp:TemplateField>
+                       <asp:TemplateField HeaderText="Location" ItemStyle-HorizontalAlign="Left"  Visible="false" >
+                            <ItemTemplate>
+                                &nbsp;&nbsp;&nbsp;<asp:Label ID="lblFacility_Name" runat="server" Text='<%#Eval("Facility_Name")%>' Font-Bold="false"></asp:Label>
+                            </ItemTemplate>                        
+                       </asp:TemplateField>
+                       <asp:TemplateField HeaderText="Rx Date" ItemStyle-HorizontalAlign="center"  >
+                            <ItemTemplate>
+                                <asp:Label ID="lblRxDate" runat="server" Text='<%#Eval("Rx_Date")%>' Font-Bold="false"></asp:Label>
+                            </ItemTemplate>                        
+                       </asp:TemplateField>
+                       <asp:HyperLinkField ControlStyle-Width="150px" HeaderText="Patient" ItemStyle-HorizontalAlign="left" DataNavigateUrlFields="Pat_ID" DataNavigateUrlFormatString="../Patient/AllPatientProfile.aspx?patID={0}" DataTextField="PatientName"  />
+                       <asp:TemplateField HeaderText="Doctor"  ItemStyle-HorizontalAlign="Left" ItemStyle-Width="150px">
+                            <ItemTemplate>
+                                <asp:Label ID="lblDoctor" runat="server" Text='<%# Eval("doctorName")%>' Font-Bold="false"></asp:Label>                            
+                            </ItemTemplate>
+                       </asp:TemplateField>
+                       <asp:TemplateField HeaderText="Initiated By/Contact"  ItemStyle-HorizontalAlign="Left" ItemStyle-Width="150px">
+                            <ItemTemplate>
+                                <asp:Label ID="lblInitiator" runat="server" Text='<%# Eval("Rx_Request_Type")%>' Font-Bold="false"></asp:Label>                            
+                            </ItemTemplate>
+                       </asp:TemplateField>
+                        <asp:TemplateField HeaderText="DrugName"  ItemStyle-HorizontalAlign="Left" ItemStyle-Width="150px">
+                            <ItemTemplate>
+                            <asp:LinkButton ID="hlDrugName" runat="server" Text='<%# Eval("Rx_DrugName")%>' CommandArgument='<%# Eval("Rx_Req_ID")%>' CommandName="RXApproval"></asp:LinkButton>
+                             </ItemTemplate>
+                       </asp:TemplateField>
+                       <asp:TemplateField HeaderText="Comments"  ItemStyle-HorizontalAlign="Left" >
+                            <ItemTemplate>
+                                <asp:Label ID="lblcomments" runat="server" Text='<%# Eval("Rx_Request_Comments")%>' Font-Bold="false" ItemStyle-Width="150px"></asp:Label>                            
+                            </ItemTemplate>
+                       </asp:TemplateField>
+                       <asp:TemplateField HeaderText="Status"  ItemStyle-HorizontalAlign="Left" ItemStyle-Width="80px">
+                            <ItemTemplate>
+                                <asp:Label ID="lblstatus" runat="server" Text='<%# Eval("status")%>' Font-Bold="false"></asp:Label>                            
+                            </ItemTemplate>
+                       </asp:TemplateField>
+                       </Columns>
+                       <AlternatingRowStyle CssClass="medication_info_tr-even" />
+                       <HeaderStyle CssClass="medication_info_th1" />
+                       <RowStyle CssClass="medication_info_tr-odd" />
+                 </asp:GridView>
+                 </td>
+            </tr>
+            </table>
+    
+</asp:Content>
+

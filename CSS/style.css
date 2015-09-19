@@ -1,0 +1,158 @@
+
+
+body	{ 
+margin: 0px 0px 0px 0px; 
+background-color: #b5d1e8; 
+
+/*background-image: url(../images/mw_main_bg.jpg); background-repeat: repeat-x;*/
+font-size:10px; font-family : Arial, Helvetica, Verdana, sans-serif; 
+color: #000000 } 
+
+.span {
+  color: #000000;
+  font-family:arial;
+  font-size:12px;
+} 
+
+/*a { text-decoration: none; color: #ff6600; font-family : Arial, Geneva, Verdana, Helvetica, sans-serif; font-size: 10px;  padding-bottom: 20px;}
+a:hover { color: #ff3300; font-family : Arial, Geneva, Verdana, Helvetica, sans-serif; font-size: 10px;}*/
+
+.linkTitle a:link {text-decoration: none; color: #800080; font-family : arial, geneva, verdana, helvetica, sans-serif; font-size: 12px;  padding-bottom: 20px;}
+.linkTitle a:hover {text-decoration:none; color: #ff3300; font-family : arial, geneva, verdana, helvetica, sans-serif; font-size: 12px; }
+.linkTitle {text-decoration: none; color: #800080; font-size: 12px; font-family : arial, geneva, verdana, helvetica, sans-serif;} 
+ 
+.mainText { color: #333333; text-align: Justify; font-size: 12px; line-height: 1.5; font-family : Arial, Geneva, Verdana, Helvetica, sans-serif; line-height: 1.5; }
+.bottomText { color: #ffffff; text-align: Right; font-size: 11px; font-family : Arial, Geneva, Verdana, Helvetica, sans-serif;}
+
+
+/*.bottomMenu a:link { color: #6F8CA1; text-align: left; font-size: 11px; font-family : Arial, Geneva, Verdana, Helvetica, sans-serif; }
+.bottomMenu a:hover { color: #F79646; text-align: left; font-size: 11px; font-family : Arial, Geneva, Verdana, Helvetica, sans-serif; }*/
+
+
+        TABLE.tabulardata {
+            /*BACKGROUND-COLOR: #74aefa;*/
+            border-width:1px;
+            border-color:Gray;
+        }
+        TABLE.tabulardata TR {
+             BACKGROUND-COLOR: white;
+             border-width:1px;
+             border-color:Gray;
+        }
+         TABLE.tabulardata TH {
+            BACKGROUND-COLOR:#82CAFF;
+            PADDING:2px;
+            vertical-align:middle;
+            text-align:center;
+            border-width:1px;
+            border-color:Gray;
+			
+         }
+         TABLE.tabulardata TD {
+             PADDING:4px;
+             height:auto;
+             border-color:Gray;
+             border-width:1px;
+		}
+		TABLE.tabulardata input			
+		{
+			font-family:Arial, Helvetica, sans-serif;
+			font-size:12px;
+			background: white;
+			color:black;
+			cursor:text;
+
+			border-bottom: 1px solid #104A7B;
+			border-right: 1px solid #104A7B;
+			border-left: 1px solid #104A7B;
+			border-top:1px solid #104A7B;
+
+			padding-top:2px;
+			width:auto;	
+		
+		}	
+		.textAlign
+		{
+		 text-align  :center;	
+		}
+		
+		
+.NewsTab .ajax__tab_header 
+{
+    color: #4f81bc;
+    font-size: 13px;
+    font-weight: bold;
+    background-color: Transparent;
+    margin-left: 10px;
+    
+    
+}
+.NewsTab .ajax__tab_outer
+{
+    
+}
+.NewsTab .ajax__tab_inner
+{
+    padding: 6px;
+    margin-right: 1px;
+    margin-left: 1px;
+    margin-top: 1px;
+    margin-bottom: 1px;
+   
+}
+.NewsTab .ajax__tab_hover .ajax__tab_outer
+{
+   
+}
+.NewsTab .ajax__tab_hover .ajax__tab_inner
+{
+   
+}
+.NewsTab .ajax__tab_active .ajax__tab_outer
+{
+    
+}
+.NewsTab .ajax__tab_active .ajax__tab_inner
+{
+    color:Orange;
+
+}
+.toolbar
+        {
+         font-size: 13px;
+         font-family: Verdana;
+         padding: 6px;
+         vertical-align:middle;
+         
+        }
+
+ 
+.pager
+{
+	text-decoration: none; 
+	color: #FFFFFF; 
+ 
+	font-family : arial, geneva, verdana, helvetica, sans-serif;
+	font-size: 10px; 
+}
+
+.label{
+font-family: Tahoma;
+font-size: 15px;
+color: #FFFFFF;
+border:0px solid #99BBE8;
+padding:5px;
+font-weight: normal;
+}
+.SubTotalRowStyle{
+    border:solid 1px Gray;
+    background-color:#81BEF7;
+    font-weight:bold;
+    
+}
+.GrandTotalRowStyle{
+    border:solid 1px Gray;
+    background-color:#3333FF;
+    font-weight:bold;
+    color:#FFFFFF;
+}

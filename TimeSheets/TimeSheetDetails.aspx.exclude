@@ -1,0 +1,106 @@
+﻿<%@ Page Language="C#" MasterPageFile="~/Templates/eCareXMaster.master" AutoEventWireup="true" CodeFile="TimeSheetDetails.aspx.cs" Inherits="Patient_TimeSheetDetails" Title="Untitled Page" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+    <asp:UpdatePanel ID="updatepanelTimeSheet" runat="server">
+<ContentTemplate>
+  <table width="100%">
+       <tr class="medication_info_th1">
+        <td colspan="4" align="center">Time Sheet</td>
+       </tr>
+       <tr class="medication_info_tr-odd">
+           <td>
+                <asp:Label ID="lblempName" runat="server" Text="Employee Name"></asp:Label>
+           </td>
+           <td>
+                <asp:Label ID="lblempName1" runat="server" Text=""></asp:Label>
+           </td> 
+           <td>
+                <asp:Label ID="lblPhone" runat="server" Text="Phone"></asp:Label>
+           </td>
+           <td>
+                <asp:Label ID="lblPhone1" runat="server" Text=""></asp:Label>
+           </td> 
+       </tr>
+        <tr class="medication_info_tr-even">
+           <td>
+                <asp:Label ID="lblLocation" runat="server" Text="Location"></asp:Label>
+           </td>
+           <td>
+                <asp:Label ID="lblLocation1" runat="server" Text=""></asp:Label>
+           </td> 
+           <td>
+                <asp:Label ID="lblEmail" runat="server" Text="E-Mail"></asp:Label>
+           </td>
+           <td>
+                <asp:Label ID="lblMailId1" runat="server"></asp:Label>
+           </td> 
+       </tr>
+        <tr class="medication_info_tr-odd">
+           <td>
+                <asp:Label ID="lblSupervisor" runat="server" Text="Supervisor"></asp:Label>
+           </td>
+           <td>
+                <asp:Label ID="lblSupervisor1" runat="server" Text=""></asp:Label>
+           </td> 
+           <td>
+                <asp:Label ID="AltlblSupervisor" runat="server" Text="Alt. Supervisor"></asp:Label>
+           </td>
+           <td>
+                <asp:Label ID="AltlblSupervisor1" runat="server" Text="--"></asp:Label>
+           </td> 
+       </tr>
+       <tr class="medication_info_tr-even">
+           <td >
+                <asp:Label ID="lblComments" runat="server" Text="Comments"></asp:Label>
+           </td>
+           <td colspan="3">
+                <asp:Label ID="lblComments1" runat="server" Text=""></asp:Label>
+           </td> 
+       </tr>
+       <tr align="center" class="medication_info_tr-odd">
+       <td colspan="4" align="center">
+       <asp:GridView ID="gridEmpTSdetails" runat="server" AutoGenerateColumns="false" OnRowCommand="CreateOrAddTimeSheet" Width="100%">
+           <Columns>
+            <%--<asp:TemplateField HeaderText="Status" Visible="false">
+                    <ItemTemplate>
+                        <asp:HyperLink ID="lblgridTSID" runat="server" Text='<%# Eval("PP_ID")%>'></asp:HyperLink>
+                    </ItemTemplate>
+                </asp:TemplateField>--%>
+                <asp:TemplateField HeaderText="Pay Period Start Date" HeaderStyle-CssClass="medication_info_th1">
+                    <ItemTemplate>
+                        <asp:Label ID="lblgridDate" runat="server" Text='<%# Eval("TS_SDate")%>'></asp:Label>
+                    </ItemTemplate>
+                    <ItemStyle CssClass="medication_info_td-even" />
+                </asp:TemplateField>               
+                <%--<asp:TemplateField HeaderText="Regular Hours">
+                            <ItemTemplate>
+                                <asp:Label ID="lblRhrs" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
+                            </ItemTemplate>                        
+                            </asp:TemplateField>
+                <asp:TemplateField HeaderText="Status">--%>
+                <asp:TemplateField HeaderText="Status"  HeaderStyle-CssClass="medication_info_th1">
+                    <ItemTemplate>
+                        <asp:Label ID="lblgridStatus" runat="server" Text='<%# Eval("TS_Status")%>'></asp:Label>
+                    </ItemTemplate>
+                    <ItemStyle CssClass="medication_info_td-odd" />
+                </asp:TemplateField>
+                
+                 <asp:TemplateField HeaderText="View/Modify"  HeaderStyle-CssClass="medication_info_th1">
+                    <ItemTemplate>
+                        <asp:LinkButton ID="btngridModCreate" runat="server" CommandName="CreateOrAdd" Text="Create New / Modify" CommandArgument='<%# Eval("TS_PPD")%>'></asp:LinkButton>
+                        <asp:ImageButton ID="btnprint" runat="server" ImageUrl="~/images/printer.jpeg"  Height="25px"/>                        
+                    </ItemTemplate>
+                     <ItemStyle CssClass="medication_info_td-even" />
+                </asp:TemplateField>
+                
+           </Columns>
+       </asp:GridView>
+       </td>       
+       </tr>
+       </table>
+</ContentTemplate>
+ </asp:UpdatePanel>
+</asp:Content>
+

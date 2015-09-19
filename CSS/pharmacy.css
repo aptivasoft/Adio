@@ -1,0 +1,59 @@
+
+
+.pharmacy_info{
+width: 100%; 
+height: 12px;
+padding: 2px; 
+border: 1px solid #FFFFFF;
+border-collapse:collapse;
+font-family : Arial, Helvetica, Verdana, sans-serif;
+}
+
+.pharmacy_info_th1 { 
+background: #4f81bc; 
+text-align: left; 
+font-size: 12px; 
+font-family : Arial, Helvetica, Verdana, sans-serif;
+color:#FFFFFF; 
+border-collapse:collapse;
+padding: 1px; 
+font-weight: bold; 
+} 
+
+.pharmacy_info_tr-odd{ 
+font-size: 11px; 
+border: 1px solid #FFFFFF;
+background-color: #BED9EC; 
+vertical-align: middle; 
+padding: 5px; 
+font-weight: bold; 
+}
+
+.pharmacy_info_td-odd{ 
+border: 1px solid #FFFFFF;
+vertical-align: middle; 
+padding: 5px; 
+}
+.pharmacy_info_td-even{ 
+border: 1px solid #FFFFFF;
+vertical-align: middle; 
+padding: 5px; 
+}
+.pharmacy_info_tr-even{ 
+font-size: 11px; 
+border: 1px solid #FFFFFF;
+background-color: #e2edf5; 
+vertical-align: middle; 
+padding: 5px; 
+font-weight: bold; 
+}
+.pharmacy_info_th { 
+background: #8ba6b9; 
+border: 1px solid #FFFFFF;
+font-size: 12px; 
+font-family : Arial, Helvetica, Verdana, sans-serif;
+color:#FFFFFF; 
+padding: 6px; 
+text-align: center;
+font-weight: bold; 
+} 

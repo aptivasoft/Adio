@@ -1,0 +1,28 @@
+﻿		.AutoExtender1
+        {
+            font-family : Arial, Helvetica, Verdana, sans-serif;
+            font-size: 11px;
+			margin: 0px 0px 0px 0px; 
+            font-weight: normal;
+            border:solid 1px #e2edf5;
+
+            overflow:auto;
+            height:130px;
+            background-color:White;
+        }
+        
+        .AutoExtender2
+        {
+            font-family : Arial, Helvetica, Verdana, sans-serif;
+            font-size: 11px;
+			margin: 1px 0px 0px 0px; 
+            font-weight: normal;
+            border:solid 1px #BED9EC;
+
+            overflow:auto;
+            height:195px;
+            width:240px;
+            background-color:White;
+        }
+
+ 

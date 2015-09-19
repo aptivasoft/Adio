@@ -1,0 +1,208 @@
+﻿using System;
+using System.Collections;
+using System.Configuration;
+using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.Security;
+using System.Web.UI;
+using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Xml.Linq;
+using System.Web.Services;
+using System.Web.Script.Serialization;
+using System.Collections.Generic;
+using System.Text;
+using System.Data.SqlClient;
+
+
+public partial class RxRequestQueue : System.Web.UI.Page
+{
+    string conStr = ConfigurationManager.AppSettings["conStr"];
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (Session["User"] == null || Session["Role"] == null)
+            Response.Redirect("../Login.aspx");
+
+        if (!Page.IsPostBack)
+        {
+            
+            
+        }
+        GridViewHelper helper = new GridViewHelper(this.gridRxRequestQueue);
+        if ((string)Session["Role"] == "D" || (string)Session["Role"] == "N")
+        {
+            lblsortby.Visible = false;
+            rbtnShowAll.Visible = false;
+            rbtnFacility.Visible = false;
+            rbtnDoctor.Visible = false;
+            gridRxRequestQueue.Columns[2].Visible = true;
+            gridRxRequestQueue.Columns[4].Visible = false;
+            helper.RegisterGroup("Rx_Date", true, true);
+        }
+        else
+        {
+            if (rbtnDoctor.Checked)
+            {
+                helper.RegisterGroup("doctorName", true, true);
+                gridRxRequestQueue.Columns[2].Visible = true;
+                gridRxRequestQueue.Columns[4].Visible = false;
+            }
+            if (rbtnFacility.Checked)
+            {
+                helper.RegisterGroup("Clinic_Name", true, true);
+                helper.RegisterGroup("Facility_Name", true, true);
+                gridRxRequestQueue.Columns[2].Visible = true;
+                gridRxRequestQueue.Columns[4].Visible = true;
+
+            }
+            
+            if (rbtnShowAll.Checked)
+            {
+                helper.RegisterGroup("Rx_Date", true, true);
+                gridRxRequestQueue.Columns[2].Visible = false;
+                gridRxRequestQueue.Columns[4].Visible = true;
+
+            }
+        }
+        
+        helper.GroupHeader += new GroupEvent(helper_GroupHeader);
+        
+       // helper.ApplyGroupSort();
+        Filldata();
+        lblHeading.Text = "Rx Approval " ;
+    }
+    private void helper_GroupHeader(string groupName, object[] values, GridViewRow row)
+    {
+
+
+        if (groupName == "Clinic_Name")
+        {
+            row.BackColor = System.Drawing.ColorTranslator.FromHtml("#b5d1e8");
+            //row.ForeColor = System.Drawing.Color.Blue;
+            row.HorizontalAlign = HorizontalAlign.Left;
+            row.Cells[0].Text = "&nbsp;&nbsp;" + row.Cells[0].Text;
+        }
+        if (groupName == "Facility_Name")
+        {
+
+            row.BackColor = System.Drawing.ColorTranslator.FromHtml("#b5d1e8");
+            //row.ForeColor = System.Drawing.Color.Blue;
+            row.HorizontalAlign = HorizontalAlign.Left;
+            row.Cells[0].Text = "&nbsp;&nbsp;Location :&nbsp;" + row.Cells[0].Text;
+        }
+        if (groupName == "doctorName")
+        {
+
+            row.BackColor = System.Drawing.ColorTranslator.FromHtml("#b5d1e8");
+            //row.ForeColor = System.Drawing.Color.Blue;
+            row.HorizontalAlign = HorizontalAlign.Left;
+            row.Cells[0].Text = "Doctor :&nbsp;" + row.Cells[0].Text;
+        }
+        row.HorizontalAlign = HorizontalAlign.Left;
+        if (groupName == "Rx_Date")
+        {
+
+            row.BackColor = System.Drawing.ColorTranslator.FromHtml("#b5d1e8");
+            //row.ForeColor = System.Drawing.Color.Blue;
+            row.HorizontalAlign = HorizontalAlign.Left;
+            row.Cells[0].Text = "Refills for " + row.Cells[0].Text;
+        }
+        
+    }
+    protected void radio_CheckChanged(object sender, EventArgs e)
+    {
+        RadioButton rbtn = (RadioButton)sender;
+        DateTime sDate;
+        DateTime eDate;
+        string s = rbtn.ID;
+        if (s == rbtnShowAll.ID)
+        {
+
+            Filldata();
+            pnlDateSelect.Visible = false;
+            //rbtnLMonth.Text= DateTime.Today.AddDays(7).ToString();
+        }
+        if (s == rbtnFacility.ID)
+        {
+            Filldata();
+            pnlDateSelect.Visible = false;
+            //rbtnLMonth.Text= DateTime.Today.AddDays(7).ToString();
+        }
+        if (s == rbtnDoctor.ID)
+        {
+            Filldata();
+            pnlDateSelect.Visible = false;
+        }
+        
+    }
+  
+    protected void Filldata()
+    {
+
+        SqlConnection sqlCon = new SqlConnection(conStr);
+
+       
+        SqlCommand sqlCmd = new SqlCommand("sp_getRxRequestQueue", sqlCon);
+        sqlCmd.CommandType = CommandType.StoredProcedure;
+        if ((string)Session["Role"] == "D" )
+        {
+            SqlParameter par_User = sqlCmd.Parameters.Add("@User", SqlDbType.VarChar,20 );
+            par_User.Value = (string)Session["User"] ;
+        
+        }
+        
+
+        SqlDataAdapter sqlDa = new SqlDataAdapter(sqlCmd);
+        DataSet dsRxRequestQueue = new DataSet();
+        try
+        {
+            sqlDa.Fill(dsRxRequestQueue, "RxRequestQueue");
+            DataView dv = new DataView(dsRxRequestQueue.Tables[0]);
+            if ((string)Session["Role"] == "T" || (string)Session["Role"] == "P")
+            {
+                dv.RowFilter = "status='Approved'";
+            }
+            if (rbtnDoctor.Checked)
+            {
+                dv.Sort = "doctorName";
+            }
+            if (rbtnFacility.Checked)
+            {
+                dv.Sort = "Clinic_Name,Facility_Name";
+            }
+            if (rbtnShowAll.Checked)
+            {
+                dv.Sort = "Rx_Date Desc";
+                //dv.Sortd
+            }
+
+            gridRxRequestQueue.DataSource = dv;
+            gridRxRequestQueue.DataBind();
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+
+
+
+
+    #region PatientPrescription Grid Events
+    //Prescription
+
+
+    protected void gridRxRequestQueue_RowCommand(object sender, GridViewCommandEventArgs e)
+    {
+        if (e.CommandName == "RXApproval")
+        {
+
+            Response.Redirect("RxApproval.aspx?RxRequestID=" + e.CommandArgument.ToString());
+           
+        }
+        
+    }
+    #endregion
+}

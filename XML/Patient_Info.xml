@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<PatientInfo>
+  <Patient ID="">
+    <Name Caption="Patient Name:" Type="Text" >Patric2</Name>
+    <DOB Caption="Date Of Birth:" Type="Text">10/10/2001</DOB>
+    <Allergies Caption="Allergies:" Type="Text">N/A</Allergies>
+    <HealthPlan Caption="Health Plan:" Type="Text">Health+</HealthPlan>
+    <LastModified Caption="Last Updated:" Type="Text">21/03/2009</LastModified>
+    <Pharmacy ID="">
+      <Address>
+        <Name Caption="Pharmacy Name:"></Name>
+        <State Caption="State:" Type="Text"></State>
+        <City Caption="City:" Type="Text"></City>
+        <Zip Caption="Zip:" Type="Text"></Zip>
+        <Phone Caption="Phone:" Type="Text"></Phone>
+        <Fax Caption="Fax:" Type="Text"></Fax>
+      </Address>
+    </Pharmacy>
+    <CurrentMedications>
+      
+    </CurrentMedications>
+  </Patient>
+</PatientInfo>

@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet type="css/text" href="UserLogin.xslt"?>
+<Pages>
+  <Page Id="1">
+    <Control type="text" caption="User ID" id="UserID"/>
+    <Control type="text" caption="Password" id="Password" mode="Password"/>
+    <!-- <LinkControl type="hyperlink" caption="Get Facility?" id="lnkFacility" visible="false"/>-->
+    <LinkControl type="hyperlink" caption="Forgot Password?" id="lnkForgotPwd"/>
+    <ButtonControl type="button" caption="Login" id="btnLogin"/>
+  </Page>
+</Pages>
+

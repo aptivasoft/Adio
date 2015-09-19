@@ -1,0 +1,35 @@
+﻿
+
+.popupControl {
+
+background-color:#AAD4FF;
+position:absolute;
+
+visibility:hidden;
+border-style:solid;
+
+border-color: Black;
+border-width: 2px;
+
+}
+.modalBackground 
+{
+	background-color:Gray;
+	filter:alpha(opacity=45);
+	opacity:0.6;
+	border-color:Black;
+	border-style:solid;
+}
+.modalPopup 
+{
+
+background-color:#ffffdd;
+border-width:3px;
+
+border-style:solid;
+border-color:Gray;
+
+padding:3px;
+width:250px;
+
+}
