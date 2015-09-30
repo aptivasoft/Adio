@@ -1,9 +1,9 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Adio", ".", "{C78434B4-018F-4DFC-87C3-D1D82DB193F7}"
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Adio_eCareXSA", ".", "{C78434B4-018F-4DFC-87C3-D1D82DB193F7}"
 	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv3.5"
+		TargetFramework = "3.5"
 		Debug.AspNetCompiler.VirtualPath = "/Adio_eCareXSA"
 		Debug.AspNetCompiler.PhysicalPath = "..\Adio_eCareXSA\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\Adio_eCareXSA\"
@@ -26,7 +26,8 @@ Global
 		Debug|.NET = Debug|.NET
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C78434B4-018F-4DFC-87C3-D1D82DB193F7}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{C78434B4-018F-4DFC-87C3-D1D82DB193F7}.Debug|.NET.ActiveCfg = Debug|.NET
+		{C78434B4-018F-4DFC-87C3-D1D82DB193F7}.Debug|.NET.Build.0 = Debug|.NET
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -600,7 +600,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
             String mname = "";
             if (dr[6].ToString().Trim() != mname)
                 mname = " "+ dr[6].ToString().Trim()+".";
-            if((string)HttpContext.Current.Session["Role"]=="A" || (string)Session["Role"] == "T")
+            if ((string)HttpContext.Current.Session["Role"] == "A" || (string)HttpContext.Current.Session["Role"] == "T")
                 Pat_List.Add(AjaxControlToolkit.AutoCompleteExtender.CreateAutoCompleteItem(dr[1].ToString() + "," + dr[0].ToString() + mname + " -" + dr[5].ToString() + " - [ " + dr[7].ToString() + " ]", dr[2].ToString()));
             else
                 Pat_List.Add(AjaxControlToolkit.AutoCompleteExtender.CreateAutoCompleteItem(dr[1].ToString() + "," + dr[0].ToString() + mname + " -" + dr[5].ToString(), dr[2].ToString()));
