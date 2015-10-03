@@ -202,7 +202,7 @@
             
             <asp:Panel ID="surveyDiv" runat="server">
 
-                <div class="modal-dialog">
+                <div class="modal-dialog" >
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeSurveyDialog()"><span aria-hidden="true">&times;</span></button>
@@ -210,27 +210,27 @@
                         </div>
                         <div class="modal-body">
                             <div id="questionDiv" class="col-md-12" style="min-height: 100px">
-                                <div class="col-md-6">
-                                    Question One
+                                <div class="col-md-6" style="float: left">
+                                    Q1. Regarding your current supply of medicine(s), do you have...
                                 </div>
                                 <div class="col-md-6">
-                                    <textarea class="questionComment" class rows="4"></textarea>
+                                    <textarea class="questionComment" class rows="4" style="float: right"></textarea>
                                 </div>
                             </div>
                             <div id="Div1" class="col-md-12" style="min-height: 100px">
-                                <div class="col-md-6">
-                                    Question One
+                                <div class="col-md-6" style="float: left">
+                                    Q1. Regarding your current supply of medicine(s), do you have...
                                 </div>
                                 <div class="col-md-6">
-                                    <textarea class="questionComment" class rows="4"></textarea>
+                                    <textarea class="questionComment" class rows="4" style="float: right"></textarea>
                                 </div>
                             </div>
                             <div id="Div3" class="col-md-12" style="min-height: 100px">
-                                <div class="col-md-6">
-                                    Question One
+                                <div class="col-md-6" style="float: left">
+                                    Q1. Regarding your current supply of medicine(s), do you have...
                                 </div>
                                 <div class="col-md-6">
-                                    <textarea class="questionComment" class rows="4"></textarea>
+                                    <textarea class="questionComment" class rows="4" style="float: right"></textarea>
                                 </div>
                             </div>
                         </div>
