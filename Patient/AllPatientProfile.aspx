@@ -186,6 +186,67 @@
                     ScrollBars="Auto" 
                     BorderWidth="0" 
                     CssClass="blue" > 
+    <cc1:TabPanel ID="TabPanel1" runat="server" Height="85">
+        <HeaderTemplate>Survey</HeaderTemplate>
+        <ContentTemplate>
+            <cc1:ModalPopupExtender ID="ModalPopupExtender1"
+                runat="server"
+                BehaviorID="mpe"
+                TargetControlID="LinkButton1"
+                PopupControlID="surveyDiv"
+                BackgroundCssClass="modalBackground"
+                Enabled="True">
+            </cc1:ModalPopupExtender>
+            <asp:LinkButton ID="LinkButton1" runat="server" ForeColor="#000066"></asp:LinkButton>
+            <a href="javascript:void(0);" id="surveyLog" onclick="openSurvey()">Add Survey</a>
+            
+            <asp:Panel ID="surveyDiv" runat="server">
+
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeSurveyDialog()"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title">Modal title</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div id="questionDiv" class="col-md-12" style="min-height: 100px">
+                                <div class="col-md-6">
+                                    Question One
+                                </div>
+                                <div class="col-md-6">
+                                    <textarea class="questionComment" class rows="4"></textarea>
+                                </div>
+                            </div>
+                            <div id="Div1" class="col-md-12" style="min-height: 100px">
+                                <div class="col-md-6">
+                                    Question One
+                                </div>
+                                <div class="col-md-6">
+                                    <textarea class="questionComment" class rows="4"></textarea>
+                                </div>
+                            </div>
+                            <div id="Div3" class="col-md-12" style="min-height: 100px">
+                                <div class="col-md-6">
+                                    Question One
+                                </div>
+                                <div class="col-md-6">
+                                    <textarea class="questionComment" class rows="4"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="fotterDiv" class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="closeSurveyDialog()">Close</button>
+                            <button type="button" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+
+            </asp:Panel>
+
+        </ContentTemplate>
+    </cc1:TabPanel>
 <cc1:TabPanel ID="Patient_Rx" runat="server" Height="85">
 <HeaderTemplate>Prescriptions</HeaderTemplate>
 <ContentTemplate>
@@ -1284,9 +1345,7 @@
     </ContentTemplate>
 </cc1:TabPanel>                 
 <cc1:TabPanel ID="Patient_Info" runat="server" Height="85">
-<HeaderTemplate>
-    <label id="lblCallLog" style="margin-bottom:0px !important">Call Log</label>
-</HeaderTemplate>
+<HeaderTemplate>Call Log</HeaderTemplate>
 <ContentTemplate>
 <cc1:ModalPopupExtender ID="AddCallLog" 
                         runat="server" 
@@ -1942,29 +2001,40 @@
 </td>
 </tr>
 </table>
-    
-      <div id="menuCallLog">
-        <ul id="menuUL" class="dropdown-menu" role="menu" aria-labelledby="menu1" style="display: block !important">
-            <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Survey Log</a></li>
-            <li role="presentation" class="divider"></li>
-            <li role="presentation"><a role="menuitem" tabindex="-1" href="#">MedLine Log</a></li>
-        </ul>
-     </div>
      <script language="javascript" type="text/javascript">
          
-         $("body").delegate("label", "click", function (event) {
+         var surveyQuestion = [
+            {
+                "Question": "Question Text",
+                "Question_Type": "Multi",
+                "AnswerOption": [{ "Text": "A", selected: true }, { "Text": "B", "option": { "Type": "multi", "Text": ["Yes", "No"] } }],
+                "Comment": "ssdsddsdsdssdsdsd"
+            },
+            {
+                "Question": "Question Text",
+                "Question_Type": "Multi",
+                "AnswerOption": [{ "Text": "A" }, { "Text": "B", "option": { "Type": "multi", "Text": ["Yes", "No"] } }],
+                "Comment": ""
+            }
+         ];
 
-             $("#menuUL").show();
-             $("#menuUL").css({ top: $(this).offset().top + 25 });
-             $("#menuUL").css({ left: $(this).offset().left - 24 });
+         function openSurvey() {
 
-             event.preventDefault();
-             event.stopPropagation();
-         });
+             $(surveyQuestion).each(function () {
 
-         $("body").click(function() {
-             $("#menuUL").hide();
-         });
+             });
+
+             $("#fotterDiv").css("margin-top", ((100 * $(surveyQuestion).length) + 100));
+
+             $find("mpe").show();
+             return false;
+         };
+
+
+         function closeSurveyDialog() {
+             $find("mpe").hide();
+             return false;
+         }
      </script>
 </asp:Content>
 
