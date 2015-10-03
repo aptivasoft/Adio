@@ -20,15 +20,22 @@
     <link rel="stylesheet" type="text/css" href="../_assets/css/round-themes.css" />
     <link rel="stylesheet" type="text/css" href="../_assets/css/tabs.css" />
     <link rel="stylesheet" type="text/css" href="../_assets/css/tab-themes.css" />
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
     
     <script type="text/javascript" src="../javascript/PopUpTooltip.js"></script>
     <script type="text/javascript" src="../javascript/eCareX.js"></script>
     <script type="text/javascript" src="../javascript/chrome.js"></script> 
-    <script src="../Scripts/jquery-1.4.1.js" type="text/javascript"></script>
-    <script src="../Scripts/jquery-1.4.1.min.js" type="text/javascript"></script>    
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>  
     <script src="../Scripts/jquery.autocomplete.js" type="text/javascript"></script>
     <script src="../Scripts/jquery.ui.core.js" type="text/javascript"></script> 
-    <script src="../Scripts/jquery.ui.widget.js" type="text/javascript"></script>    
+    <script src="../Scripts/jquery.ui.widget.js" type="text/javascript"></script>   
+    
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script> 
     
     <script language="javascript" type = "text/javascript">    
     function AutoCompleteSelected_Facility(source, eventArgs) 
