@@ -26,6 +26,10 @@
     <!-- Optional theme -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
     
+    <!-- Optional theme -->
+    <link href="../Patient/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../Patient/css/custom.css" rel="stylesheet">
+    
     <script type="text/javascript" src="../javascript/PopUpTooltip.js"></script>
     <script type="text/javascript" src="../javascript/eCareX.js"></script>
     <script type="text/javascript" src="../javascript/chrome.js"></script> 

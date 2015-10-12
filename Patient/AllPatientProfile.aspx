@@ -202,42 +202,84 @@
             
             <asp:Panel ID="surveyDiv" runat="server">
 
-                <div class="modal-dialog" >
+                <div class="modal-dialog" style="width: 900px !important">
                     <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeSurveyDialog()"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title">Modal title</h4>
-                        </div>
-                        <div class="modal-body">
-                            <div id="questionDiv" class="col-md-12" style="min-height: 100px">
-                                <div class="col-md-6" style="float: left">
-                                    Q1. Regarding your current supply of medicine(s), do you have...
-                                </div>
-                                <div class="col-md-6">
-                                    <textarea class="questionComment" class rows="4" style="float: right"></textarea>
-                                </div>
-                            </div>
-                            <div id="Div1" class="col-md-12" style="min-height: 100px">
-                                <div class="col-md-6" style="float: left">
-                                    Q1. Regarding your current supply of medicine(s), do you have...
-                                </div>
-                                <div class="col-md-6">
-                                    <textarea class="questionComment" class rows="4" style="float: right"></textarea>
-                                </div>
-                            </div>
-                            <div id="Div3" class="col-md-12" style="min-height: 100px">
-                                <div class="col-md-6" style="float: left">
-                                    Q1. Regarding your current supply of medicine(s), do you have...
-                                </div>
-                                <div class="col-md-6">
-                                    <textarea class="questionComment" class rows="4" style="float: right"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="fotterDiv" class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="closeSurveyDialog()">Close</button>
-                            <button type="button" class="btn btn-primary">Save changes</button>
-                        </div>
+                          <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="surveyH clearfix">
+                                    <a class="crossBtn glyphicon glyphicon-remove" onclick="closeSurveyDialog()">&nbsp;</a>
+                                    <h3>SURVEY #33</h3>
+                                    <ul>
+                                        <li>
+                                            <div class="col-sm-8">
+                                                <p>Q1. Regarding your current supply of medicine(s), do you have...</p>
+                                                <div class="listAns">
+                                                    <ul>
+                                                        <li>
+                                                            <input type="checkbox">
+                                                            a) MORE than enough to last until your next refill?
+                                                        </li>
+                                                        <li>
+                                                            <input type="checkbox">
+                                                            b) NOT ENOUGH to last until your next refill
+                                                        </li>
+                                                        <li>
+                                                            <input type="checkbox">
+                                                            c) JUST ENOUGH to last until your next refill?
+                                                        </li>
+                                                    </ul>
+                                                </div><!-- listAns -->
+                                            </div><!-- col-sm-8 -->
+                                            <div class="col-sm-4">
+                                                <textarea placeholder="*If the answer is 'a' or 'b', please note in comment box which specific medicines apply"></textarea>
+                                            </div><!-- col-sm-4 -->
+                                        </li>
+                                        <li>
+                                            <div class="col-sm-8">
+                                                <p>Q2. Do you feel like your medicine is working well for your? (yes/no)</p>
+                                                <div class="listAns">
+                                                    <input type="radio">Yes
+                                                    <input type="radio">No
+                                                </div><!-- listAns -->
+                                            </div><!-- col-sm-8 -->
+                                            <div class="col-sm-4">
+                                                <textarea placeholder="*If the answer is 'a' or 'b', please note in comment box which specific medicines apply"></textarea>
+                                            </div><!-- col-sm-4 -->
+                                        </li>
+                                        <li>
+                                            <div class="col-sm-8">
+                                                <p>Q3. In regard to your scheduled appointment with your provider, did you...</p>
+                                                <div class="listAns">
+                                                    <ul>
+                                                        <li>
+                                                            <input type="checkbox">
+                                                            keep your last doctor's appointment?
+                                                        </li>
+                                                        <li>
+                                                            <input type="checkbox">
+                                                            schedule an upcoming appointment?
+                                                        </li>
+                                                        <li>
+                                                            <input type="checkbox">
+                                                            make plans to attend that appointment?
+                                                        </li>
+                                                    </ul>
+                                                </div><!-- listAns -->
+                                            </div><!-- col-sm-8 -->
+                                            <div class="col-sm-4">
+                                                <textarea placeholder="*If the answer is 'a' or 'b', please note in comment box which specific medicines apply"></textarea>
+                                            </div><!-- col-sm-4 -->
+                                        </li>
+                                        <li>
+                                            <div class="btnH">
+                                                <button type="button" class="btn btn-default">Save</button>
+                                                <button type="button" class="btn btn-default" onclick="closeSurveyDialog()">Cancel</button>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    </div><!-- surveyH -->
+                                </div><!-- col-sm-12 -->
+                            </div><!-- row -->
                     </div>
                     <!-- /.modal-content -->
                 </div>
@@ -2036,5 +2078,7 @@
              return false;
          }
      </script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
 </asp:Content>
 

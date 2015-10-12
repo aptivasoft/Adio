@@ -1,0 +1,19 @@
+
+.surveyH                        {position:relative; border:1px solid #ffc000;}
+.surveyH h3                     {margin:0; padding:10px; font-weight:bold; color:#fff; background-color:#ffc000;}
+.surveyH .crossBtn              {position:absolute; top:14px; right:0; display:inline-block; font-weight:bold; font-size:18px; color:#000; cursor:pointer;}
+.surveyH .crossBtn:hover        {text-decoration:none; color:#666;}
+.surveyH .col-sm-8,
+.surveyH .col-sm-4              {padding:0; margin:0;}
+.surveyH textarea               {width:100%; height:82px; border:1px solid #000;}
+.surveyH ul                     {padding:0; margin:0;}
+.surveyH ul li                  {padding:10px; margin:0; list-style-type:none; display:inline-flex; width:100%; border-bottom:1px solid #ffc000; background-color:#fff;}
+.surveyH ul li p                {font-weight:bold;}
+.surveyH ul li .listAns         {margin:0px 0 0 20px;}
+.surveyH ul li .listAns input[type="checkbox"] { padding:0; margin:4px 4px 0 0;}
+.surveyH ul li .listAns input[type="radio"] {padding:0; margin:0 4px 0 10px;}
+.surveyH ul li .listAns li      {background-color:transparent; border-bottom:none;}
+.surveyH ul li:nth-child(odd)   {background-color:#fff4e7;}
+.btnH                           {text-align:center; width:100%;}
+.btn-default                    {background-color:#ffc000; margin-right:10px; font-weight:bold; padding-left:26px; padding-right:26px;}
+.btn-default:hover              {background-color:#b89007;}
