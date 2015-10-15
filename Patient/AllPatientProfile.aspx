@@ -2028,25 +2028,26 @@
 </tr>
 </table>
      <script language="javascript" type="text/javascript">
-
-         function LoadSurveyJsonObject() {
-             alert(1);
+         var surveyQuestion;
+         function LoadSurveyJsonObject(SurveyObject) {
+             surveyQuestion = JSON.parse(SurveyObject);
+             console.log("CCCCCCCCCCCCCCCCCCC", surveyQuestion);
          }
 
-         var surveyQuestion = [
-            {
-                "Question": "Question Text",
-                "Question_Type": "Multi",
-                "AnswerOption": ["A","B","C"],
-                "Comment": "ssdsddsdsdssdsdsd"
-            },
-            {
-                "Question": "Question Text",
-                "Question_Type": "Multi",
-                "AnswerOption": ["D", "E", "F"],
-                "Comment": ""
-            }
-         ];
+         //var surveyQuestion = [
+         //   {
+         //       "Question": "Question Text",
+         //       "Question_Type": "Multi",
+         //       "AnswerOption": ["A","B","C"],
+         //       "Comment": "ssdsddsdsdssdsdsd"
+         //   },
+         //   {
+         //       "Question": "Question Text",
+         //       "Question_Type": "Multi",
+         //       "AnswerOption": ["D", "E", "F"],
+         //       "Comment": ""
+         //   }
+         //];
 
          $(surveyQuestion).each(function (index, value) {
 
@@ -2063,9 +2064,8 @@
              $("#surveyUL").append(newQuestion);
          });
 
-         function openSurvey(SurveyObject) {
-             jsonData = JSON.parse(SurveyObject);
-             console.log("CCCCCCCCCCCCCCCCCCC", jsonData);
+         function openSurvey() {
+             
              $(surveyQuestion).each(function () {
 
              });

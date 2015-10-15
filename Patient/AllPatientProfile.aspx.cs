@@ -58,7 +58,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
         {
 
             string JSONObjectSurveyQuestion = SurveyQuestions.surveryQuestion();
-            Page.ClientScript.RegisterStartupScript(this.Page.GetType(), "key", "openSurvey('"+JSONObjectSurveyQuestion+"');", true);
+            Page.ClientScript.RegisterStartupScript(this.Page.GetType(), "key", "LoadSurveyJsonObject('" + JSONObjectSurveyQuestion + "');", true);
 
             rbtnAdioPharmacy.Attributes.Add("onclick", "document.getElementById('" + txtPharmacy.ClientID + "').style.visibility='hidden'; document.getElementById('" + txtPharmacy.ClientID + "').value='';document.getElementById('" + rbtnPAP.ClientID + "').disabled=false;document.getElementById('" + rbtnSample.ClientID + "').disabled=false;document.getElementById('" + ddl_P_Status.ClientID + "').selectedIndex = 0;");
             rbtnOtherPharmacy.Attributes.Add("onclick", "document.getElementById('" + txtPharmacy.ClientID + "').style.visibility='visible';document.getElementById('" + txtPharmacy.ClientID + "').value='Other Pharmacy';document.getElementById('" + rbtnRegular.ClientID + "').checked=true;document.getElementById('" + rbtnPAP.ClientID + "').disabled=false;document.getElementById('" + rbtnSample.ClientID + "').disabled=false;frmchng('O','" + ddl_P_Status.ClientID + "'); ");
@@ -71,7 +71,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
             lblTransAdjDate.Text = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss");
             
             if (Session["User"] == null || Session["Role"] == null)
-                //Response.Redirect("../Login.aspx");
+                Response.Redirect("../Login.aspx");
 
             AutocompletePatients.ContextKey = (string)Session["User"];
 
