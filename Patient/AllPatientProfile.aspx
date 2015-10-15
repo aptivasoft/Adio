@@ -209,43 +209,7 @@
                                     <div class="surveyH clearfix">
                                     <a class="crossBtn glyphicon glyphicon-remove" onclick="closeSurveyDialog()">&nbsp;</a>
                                     <h3>SURVEY #33</h3>
-                                    <ul>
-                                        <li>
-                                            <div class="col-sm-8">
-                                                <p>Q1. Regarding your current supply of medicine(s), do you have...</p>
-                                                <div class="listAns">
-                                                    <ul>
-                                                        <li>
-                                                            <input type="checkbox">
-                                                            a) MORE than enough to last until your next refill?
-                                                        </li>
-                                                        <li>
-                                                            <input type="checkbox">
-                                                            b) NOT ENOUGH to last until your next refill
-                                                        </li>
-                                                        <li>
-                                                            <input type="checkbox">
-                                                            c) JUST ENOUGH to last until your next refill?
-                                                        </li>
-                                                    </ul>
-                                                </div><!-- listAns -->
-                                            </div><!-- col-sm-8 -->
-                                            <div class="col-sm-4">
-                                                <textarea placeholder="*If the answer is 'a' or 'b', please note in comment box which specific medicines apply"></textarea>
-                                            </div><!-- col-sm-4 -->
-                                        </li>
-                                        <li>
-                                            <div class="col-sm-8">
-                                                <p>Q2. Do you feel like your medicine is working well for your? (yes/no)</p>
-                                                <div class="listAns">
-                                                    <input type="radio">Yes
-                                                    <input type="radio">No
-                                                </div><!-- listAns -->
-                                            </div><!-- col-sm-8 -->
-                                            <div class="col-sm-4">
-                                                <textarea placeholder="*If the answer is 'a' or 'b', please note in comment box which specific medicines apply"></textarea>
-                                            </div><!-- col-sm-4 -->
-                                        </li>
+                                    <ul id="surveyUL">
                                         <li>
                                             <div class="col-sm-8">
                                                 <p>Q3. In regard to your scheduled appointment with your provider, did you...</p>
@@ -270,7 +234,9 @@
                                                 <textarea placeholder="*If the answer is 'a' or 'b', please note in comment box which specific medicines apply"></textarea>
                                             </div><!-- col-sm-4 -->
                                         </li>
-                                        <li>
+                                    </ul>
+                                    <ul>
+                                        <li id="fotterSectionOfSurvey">
                                             <div class="btnH">
                                                 <button type="button" class="btn btn-default">Save</button>
                                                 <button type="button" class="btn btn-default" onclick="closeSurveyDialog()">Cancel</button>
@@ -2039,26 +2005,59 @@
        
    </asp:UpdateProgress>
  </div>
- 	
+        <ul style="display: none">
+           <li id="questionTemplate">
+                <div class="col-sm-8">
+                    <p class="questionText"></p>
+                    <div class="listAns">
+                        <ul class="answerOptions">
+                            
+                        </ul>
+                    </div><!-- listAns -->
+                </div><!-- col-sm-8 -->
+                <div class="col-sm-4">
+                    <textarea placeholder="*If the answer is 'a' or 'b', please note in comment box which specific medicines apply" class="textAreaQuestion"></textarea>
+                </div><!-- col-sm-4 -->
+            </li>
+            <li id="questionOptionLI">
+                <input type="checkbox">
+                <label class="questionOptionLabel">c) JUST ENOUGH to last until your next refill?</label>
+            </li>
+        </ul>
 </td>
 </tr>
 </table>
      <script language="javascript" type="text/javascript">
-         
+
          var surveyQuestion = [
             {
                 "Question": "Question Text",
                 "Question_Type": "Multi",
-                "AnswerOption": [{ "Text": "A", selected: true }, { "Text": "B", "option": { "Type": "multi", "Text": ["Yes", "No"] } }],
+                "AnswerOption": ["A","B","C"],
                 "Comment": "ssdsddsdsdssdsdsd"
             },
             {
                 "Question": "Question Text",
                 "Question_Type": "Multi",
-                "AnswerOption": [{ "Text": "A" }, { "Text": "B", "option": { "Type": "multi", "Text": ["Yes", "No"] } }],
+                "AnswerOption": ["D", "E", "F"],
                 "Comment": ""
             }
          ];
+
+         $(surveyQuestion).each(function (index, value) {
+
+             var newQuestion = $("#questionTemplate").clone();
+             $('.questionText', $(newQuestion)).html(value.Question);
+             $('.answerOptions', $(newQuestion)).empty();
+             $(value.AnswerOption).each(function (i, v) {
+
+                 var newAnswerOption = $("#questionOptionLI").clone();
+                 $('.questionOptionLabel', $(newAnswerOption)).html(v);
+                 $('.answerOptions', $(newQuestion)).append(newAnswerOption);
+             });
+             
+             $("#surveyUL").append(newQuestion);
+         });
 
          function openSurvey() {
 

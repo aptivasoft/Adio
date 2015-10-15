@@ -13,6 +13,7 @@ using System.Xml.Linq;
 using System.Web.Services;
 using System.Web.Script.Serialization;
 using System.Collections.Generic;
+using System.Data.Linq.Mapping;
 using System.Text;
 using System.Data.SqlClient;
 using System.Text.RegularExpressions;
@@ -36,12 +37,23 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
     PatientPersonalDetails objPat_Pat_Det = new PatientPersonalDetails();
     PatientInsuranceDetails objPat_Ins_Det = new PatientInsuranceDetails();
     PatinetMedHistoryInfo objPat_Med_His_Info = new PatinetMedHistoryInfo();
-    
+
+    private void ssss()
+    {
+        //Access the DB
+        //convert the DT to JSON object
+        //write the JSOn on Respons sterm.
+        //End the response.
+    }
 
     #region Events
 
     protected void Page_Load(object sender, EventArgs e)
     {
+        //Check url if you have getquestion as request parameter
+        //if Call is for get question
+
+
         try
         {
             rbtnAdioPharmacy.Attributes.Add("onclick", "document.getElementById('" + txtPharmacy.ClientID + "').style.visibility='hidden'; document.getElementById('" + txtPharmacy.ClientID + "').value='';document.getElementById('" + rbtnPAP.ClientID + "').disabled=false;document.getElementById('" + rbtnSample.ClientID + "').disabled=false;document.getElementById('" + ddl_P_Status.ClientID + "').selectedIndex = 0;");
