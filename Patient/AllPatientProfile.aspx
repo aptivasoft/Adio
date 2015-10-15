@@ -2029,6 +2029,10 @@
 </table>
      <script language="javascript" type="text/javascript">
 
+         function LoadSurveyJsonObject() {
+             alert(1);
+         }
+
          var surveyQuestion = [
             {
                 "Question": "Question Text",
@@ -2059,8 +2063,9 @@
              $("#surveyUL").append(newQuestion);
          });
 
-         function openSurvey() {
-
+         function openSurvey(SurveyObject) {
+             jsonData = JSON.parse(SurveyObject);
+             console.log("CCCCCCCCCCCCCCCCCCC", jsonData);
              $(surveyQuestion).each(function () {
 
              });

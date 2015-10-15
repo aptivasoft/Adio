@@ -18,6 +18,8 @@ using System.Xml.XPath;
 using NLog;
 using Adio.UALog;
 
+using System.Web.Script.Serialization;
+
 /// <summary>
 /// Summary description for SurveyQuestions
 /// </summary>
@@ -26,36 +28,51 @@ public class SurveyQuestions
     static string conStr = ConfigurationManager.AppSettings["conStr"];
     private NLog.Logger objNLog = NLog.LogManager.GetCurrentClassLogger();
     private UserActivityLog objUALog = new UserActivityLog();
+
     public SurveyQuestions()
     {
         //
         // TODO: Add constructor logic here
         //
     }
-
-    public static void get_SurveyQuestions()
+    public static string surveryQuestion()
     {
-      //  objNLog.Info("Function Started with prefixText,count as arguments...");
-        DataSet dsPatient_Names = new DataSet();
-        bool successFlag = false;
+        return DataTableToJsonWithJavaScriptSerializer(get_SurveyQuestionsDataTable());
+    }
 
-        string pat_Fname;
-        string pat_Lname;
-        string sqlQuery;
+    public static DataTable get_SurveyQuestionsDataTable()
+    {
+        DataTable dtQuestionSurvey = new DataTable();
         try
         {
-
             SqlConnection sqlCon = new SqlConnection(conStr);
             SqlCommand cmd = new SqlCommand("select * from Survey_Questions", sqlCon);
-            
             sqlCon.Open();
             SqlDataAdapter da = new SqlDataAdapter(cmd);
-            da.Fill(dsPatient_Names);
+            da.Fill(dtQuestionSurvey);
             sqlCon.Close();
         }
-        catch(Exception e)
+        catch (Exception e)
         {
         }
-
+        return dtQuestionSurvey;
     }
+
+    public static string DataTableToJsonWithJavaScriptSerializer(DataTable table)
+    {
+        JavaScriptSerializer jsSerializer = new JavaScriptSerializer();
+        List<Dictionary<string, object>> parentRow = new List<Dictionary<string, object>>();
+        Dictionary<string, object> childRow;
+        foreach (DataRow row in table.Rows)
+        {
+            childRow = new Dictionary<string, object>();
+            foreach (DataColumn col in table.Columns)
+            {
+                childRow.Add(col.ColumnName, row[col]);
+            }
+            parentRow.Add(childRow);
+        }
+        return jsSerializer.Serialize(parentRow);
+    }
+
 }
