@@ -210,30 +210,7 @@
                                     <a class="crossBtn glyphicon glyphicon-remove" onclick="closeSurveyDialog()">&nbsp;</a>
                                     <h3>SURVEY #33</h3>
                                     <ul id="surveyUL">
-                                        <li>
-                                            <div class="col-sm-8">
-                                                <p>Q3. In regard to your scheduled appointment with your provider, did you...</p>
-                                                <div class="listAns">
-                                                    <ul>
-                                                        <li>
-                                                            <input type="checkbox">
-                                                            keep your last doctor's appointment?
-                                                        </li>
-                                                        <li>
-                                                            <input type="checkbox">
-                                                            schedule an upcoming appointment?
-                                                        </li>
-                                                        <li>
-                                                            <input type="checkbox">
-                                                            make plans to attend that appointment?
-                                                        </li>
-                                                    </ul>
-                                                </div><!-- listAns -->
-                                            </div><!-- col-sm-8 -->
-                                            <div class="col-sm-4">
-                                                <textarea placeholder="*If the answer is 'a' or 'b', please note in comment box which specific medicines apply"></textarea>
-                                            </div><!-- col-sm-4 -->
-                                        </li>
+                                        
                                     </ul>
                                     <ul>
                                         <li id="fotterSectionOfSurvey">
@@ -2015,13 +1992,18 @@
                         </ul>
                     </div><!-- listAns -->
                 </div><!-- col-sm-8 -->
-                <div class="col-sm-4">
-                    <textarea placeholder="*If the answer is 'a' or 'b', please note in comment box which specific medicines apply" class="textAreaQuestion"></textarea>
+                <div class="col-sm-4" >
+                    <textarea placeholder="CCCCCCCCCCC" class="textAreaQuestion"></textarea>
+                    
                 </div><!-- col-sm-4 -->
             </li>
-            <li id="questionOptionLI">
+            <li id="questionOptionLICheckBox">
                 <input type="checkbox">
-                <label class="questionOptionLabel">c) JUST ENOUGH to last until your next refill?</label>
+                <label class="questionOptionLabelCheckBox"></label>
+            </li>
+            <li id="questionOptionLIRadioButton">
+                <input type="radio">
+                <label class="questionOptionLabelRadio"></label>
             </li>
         </ul>
 </td>
@@ -2031,49 +2013,71 @@
          var surveyQuestion;
          function LoadSurveyJsonObject(SurveyObject) {
              surveyQuestion = JSON.parse(SurveyObject);
-             console.log("CCCCCCCCCCCCCCCCCCC", surveyQuestion);
+             console.log("surveyQuestion", surveyQuestion);
+             var modifiedQuestion = [];
+             $(surveyQuestion).each(function (index, value) {
+                 modifiedQuestion.push({
+                     QID:value.QID,
+                     Ques_Text: value.Ques_Text,
+                     Ques_Type: value.Ques_Type,
+                     Ques_Comments: value.Ques_Comments,
+                     AnswerOption: [value.Ques_choice1, value.Ques_choice2,
+                         value.Ques_choice3, value.Ques_choice4]
+                 });
+             });
+             console.log("modifiedJSON", modifiedQuestion);
+             generationOfTemplate(modifiedQuestion);
          }
 
-         //var surveyQuestion = [
-         //   {
-         //       "Question": "Question Text",
-         //       "Question_Type": "Multi",
-         //       "AnswerOption": ["A","B","C"],
-         //       "Comment": "ssdsddsdsdssdsdsd"
-         //   },
-         //   {
-         //       "Question": "Question Text",
-         //       "Question_Type": "Multi",
-         //       "AnswerOption": ["D", "E", "F"],
-         //       "Comment": ""
-         //   }
-         //];
+         var surveyQuestion = [
+            {
+                "Ques_Text": "Question Text",
+                "Ques_Type": "CB",
+                "AnswerOption": [],
+                "Ques_Comments": "ssdsddsdsdssdsdsd"
+            },
+            {
+                "Question": "Question Text",
+                "Question_Type": "Multi",
+                "AnswerOption": ["D", "E", "F"],
+                "Comment": ""
+            }
+         ];
 
-         $(surveyQuestion).each(function (index, value) {
-
-             var newQuestion = $("#questionTemplate").clone();
-             $('.questionText', $(newQuestion)).html(value.Question);
-             $('.answerOptions', $(newQuestion)).empty();
-             $(value.AnswerOption).each(function (i, v) {
-
-                 var newAnswerOption = $("#questionOptionLI").clone();
-                 $('.questionOptionLabel', $(newAnswerOption)).html(v);
-                 $('.answerOptions', $(newQuestion)).append(newAnswerOption);
+         function generationOfTemplate(modifiedQuestion) {
+             $(modifiedQuestion).each(function (index, value) {
+                 var newQuestion = $("#questionTemplate").clone();
+                 $('.questionText', $(newQuestion)).html(value.Ques_Text);
+                 $('.textAreaQuestion', $(newQuestion)).attr('placeholder', value.Ques_Comments);
+                 $('.answerOptions', $(newQuestion)).empty();
+                 if (value.Ques_Type === "CB") {
+                     $(value.AnswerOption).each(function (i, v) {
+                         if (v !== null && v !== undefined) {
+                             var newAnswerOption = $("#questionOptionLICheckBox").clone();
+                             $('.questionOptionLabelCheckBox', $(newAnswerOption)).html(v);
+                             $('.answerOptions', $(newQuestion)).append(newAnswerOption);
+                         }
+                    });
+                 } else if (value.Ques_Type === "RB") {
+                     $(value.AnswerOption).each(function (i, v) {
+                         if (v !== null && v !== undefined) {
+                             var newAnswerOption = $("#questionOptionLIRadioButton").clone();
+                             $('.questionOptionLabelRadio', $(newAnswerOption)).html(v);
+                             $('.answerOptions', $(newQuestion)).append(newAnswerOption);
+                         }
+                     });
+                 }
+                $("#surveyUL").append(newQuestion);
              });
-             
-             $("#surveyUL").append(newQuestion);
-         });
+         }
 
-         function openSurvey() {
-             
-             $(surveyQuestion).each(function () {
-
+             function openSurvey() {
+                 $(surveyQuestion).each(function () {
              });
 
-             $("#fotterDiv").css("margin-top", ((100 * $(surveyQuestion).length) + 100));
-
-             $find("mpe").show();
-             return false;
+            $("#fotterDiv").css("margin-top", ((100 * $(surveyQuestion).length) + 100));
+            $find("mpe").show();
+            return false;
          };
 
 
