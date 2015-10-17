@@ -201,7 +201,7 @@
             <a href="javascript:void(0);" id="surveyLog" onclick="openSurvey()">Add Survey</a>
             
             <asp:Panel ID="surveyDiv" runat="server">
-
+                
                 <div class="modal-dialog" style="width: 900px !important">
                     <div class="modal-content">
                           <div class="row">
@@ -227,6 +227,7 @@
                     <!-- /.modal-content -->
                 </div>
                 <!-- /.modal-dialog -->
+
 
             </asp:Panel>
 
@@ -2002,7 +2003,7 @@
                 <label class="questionOptionLabelCheckBox"></label>
             </li>
             <li id="questionOptionLIRadioButton">
-                <input type="radio">
+                <input type="radio" name="answerRadio">
                 <label class="questionOptionLabelRadio"></label>
             </li>
         </ul>
@@ -2079,7 +2080,6 @@
             $find("mpe").show();
             return false;
          };
-
 
          function closeSurveyDialog() {
              $find("mpe").hide();
