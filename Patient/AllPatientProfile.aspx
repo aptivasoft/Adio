@@ -212,10 +212,12 @@
                                         <div style="max-height: 600px;overflow-x: hidden !important;overflow-y: scroll;">
                                             <ul id="surveyUL">
                                         
-                                            </ul>        
+                                            </ul>
+                                                 
                                         </div>
                                     <ul>
                                         <li id="fotterSectionOfSurvey">
+                                            <asp:Label ID="hdnfldVariable" runat="server" class="hdnfldJSONString" ></asp:Label>   
                                             <div class="btnH">
                                                 <button type="button" class="btn btn-default" onclick="saveSurvey()">Save</button>
                                                 <button type="button" class="btn btn-default" onclick="closeSurveyDialog()">Cancel</button>
@@ -2013,26 +2015,53 @@
 </tr>
 </table>
      <script language="javascript" type="text/javascript">
+        
 
          function saveSurvey() {
 
              var questioResponse = [];
-
+             $(".hdnfldJSONString").html("");
+             var outputString = "";
+             var finalSurveyOutput = "";
              $(".surveyQuestions").each(function(index, value) {
-
                  var response = {};
-
                  response.QuestionID = $(value).attr("questionID");
-                 response.selectedAnswerOption = [];
-                 $("input:checked", value).each(function() {
-                     response.selectedAnswerOption.push($(this).attr('answerID'));
-                 });
-                 response.Comment = $('.textAreaQuestion', value).val();
 
+                 if (response.QuestionID !== undefined) {
+                     //response.selectedAnswerOption = [];
+                     response.choice1_selected = 0;
+                     response.choice2_selected = 0;
+                     response.choice3_selected = 0;
+                     response.choice4_selected = 0;
+                     $("input:checked", value).each(function () {
+                         //response.selectedAnswerOption.push($(this).attr('answerID'));
+                         if ($(this).attr('answerID') === "1") {
+                             response.choice1_selected = 1;
+                         } else if ($(this).attr('answerID') === "2") {
+                             response.choice2_selected = 1;
+                         } else if ($(this).attr('answerID') === "3") {
+                             response.choice3_selected = 1;
+                         } else if ($(this).attr('answerID') === "4") {
+                             response.choice4_selected = 1;
+                         }
+                     });
+                     response.Comment = $('.textAreaQuestion', value).val();
+                     outputString += "('" + response.QuestionID + "'," + response.choice1_selected + "," + response.choice2_selected
+                     + "," + response.choice3_selected + "," + response.choice4_selected + ",'" + response.Comment + "'),";
+                 }
+                 response.Comment = $('.textAreaQuestion', value).val();
                  questioResponse.push(response);
              });
 
-             console.log("Question Response", questioResponse);
+             finalSurveyOutput = outputString.substring(0, outputString.length - 1)
+
+             console.log("Question Response", finalSurveyOutput);
+
+             console.log("EEEEEEEEEEEEEEE", outputString);
+
+
+             $(".hdnfldJSONString").html(JSON.stringify(questioResponse));
+             __doPostBack('btnSave', finalSurveyOutput);
          }
 
 

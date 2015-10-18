@@ -18,6 +18,7 @@ using System.Xml.XPath;
 using NLog;
 using Adio.UALog;
 
+
 using System.Web.Script.Serialization;
 
 /// <summary>
@@ -56,6 +57,48 @@ public class SurveyQuestions
         {
         }
         return dtQuestionSurvey;
+    }
+
+
+    public static void set_SurveyFeedback(FeedBackSurvey feedback)
+    {
+        using (SqlConnection connection = new SqlConnection(conStr))
+        {
+
+            SqlCommand cmd = new SqlCommand("DECLARE @return_value int, " +
+                                          "@SurveyID int, " +
+                                          "@PatSurNo smallint, "+
+                                          "@PRtable AS Pst_Survey_Responses "+
+  
+                                          " INSERT INTO @PRtable (QID, choice1_selected, choice2_selected, " +
+                                          "choice3_selected, choice4_selected,Ques_Comments) "+
+                                          "VALUES "+ feedback.SurveyQuestionResponse +
+
+                                          " EXEC @return_value = [dbo].[sp_set_PatientSurveys] "+
+                                          "@Fac_ID = " + feedback.FacId +", "+
+                                          "@Pat_ID = "+ feedback.patientId +", "+
+                                          "@Comments = N'" + feedback.Comments +"', "+
+                                          "@User = N'" + feedback.User +"', "+
+                                          "@PatResponses = @PRtable, "+
+                                          "@SurveyID = @SurveyID OUTPUT "+
+
+                                        "SELECT @SurveyID as N'@SurveyID' "+
+
+                                        "SELECT 'Return Value' = @return_value");
+            cmd.CommandType = CommandType.Text;
+
+            //SqlCommand com = new SqlCommand( "sp_set_PatientSurveys", connection);  //creating  SqlCommand  object
+            //com.CommandType = CommandType.StoredProcedure;
+            //com.Parameters.AddWithValue("@Pat_ID", feedback.patientId);
+            //com.Parameters.AddWithValue("@QID ", feedback.QID);
+            //com.Parameters.AddWithValue("@choice1_selected ", feedback.choice1_selected);
+            //com.Parameters.AddWithValue("@choice2_selected ", feedback.choice2_selected);
+            //com.Parameters.AddWithValue("@choice3_selected ", feedback.choice3_selected);
+            //com.Parameters.AddWithValue("@choice4_selected ", feedback.choice4_selected);
+            connection.Open();
+            cmd.ExecuteNonQuery();
+            connection.Close();
+        }
     }
 
     public static string DataTableToJsonWithJavaScriptSerializer(DataTable table)

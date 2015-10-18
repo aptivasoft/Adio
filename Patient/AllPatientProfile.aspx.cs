@@ -28,7 +28,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
     int patFacID;
 
     string conStr = ConfigurationManager.AppSettings["conStr"];
-    
+
     private static NLog.Logger objNLog = NLog.LogManager.GetCurrentClassLogger();
     private UserActivityLog objUALog = new UserActivityLog();
 
@@ -57,9 +57,13 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
         try
         {
 
-            string JSONObjectSurveyQuestion = SurveyQuestions.surveryQuestion();
-            Page.ClientScript.RegisterStartupScript(this.Page.GetType(), "key", "LoadSurveyJsonObject('" + JSONObjectSurveyQuestion + "');", true);
-
+            string s = Request.Params.Get("__EVENTTARGET");
+            if (Request.Params.Get("__EVENTTARGET") == "btnSave") 
+            {
+                string surveyQuestionResponse = Request.Params.Get("__EVENTARGUMENT");
+                SavePatientFeedBack(surveyQuestionResponse);
+            }
+            ShowFeedBack();
             rbtnAdioPharmacy.Attributes.Add("onclick", "document.getElementById('" + txtPharmacy.ClientID + "').style.visibility='hidden'; document.getElementById('" + txtPharmacy.ClientID + "').value='';document.getElementById('" + rbtnPAP.ClientID + "').disabled=false;document.getElementById('" + rbtnSample.ClientID + "').disabled=false;document.getElementById('" + ddl_P_Status.ClientID + "').selectedIndex = 0;");
             rbtnOtherPharmacy.Attributes.Add("onclick", "document.getElementById('" + txtPharmacy.ClientID + "').style.visibility='visible';document.getElementById('" + txtPharmacy.ClientID + "').value='Other Pharmacy';document.getElementById('" + rbtnRegular.ClientID + "').checked=true;document.getElementById('" + rbtnPAP.ClientID + "').disabled=false;document.getElementById('" + rbtnSample.ClientID + "').disabled=false;frmchng('O','" + ddl_P_Status.ClientID + "'); ");
             //chkRx30Patient.Attributes.Add("onclick", "if(document.getElementById('" + chkRx30Patient.ClientID + "').checked){document.getElementById('" + chkRx30Patient.ClientID + "').nextSibling.innerHTML ='Prodigy';}else {document.getElementById('" + chkRx30Patient.ClientID + "').nextSibling.innerHTML='Rx30';}");
@@ -69,7 +73,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
 
             lblTransactionDate.Text = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss");
             lblTransAdjDate.Text = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss");
-            
+
             if (Session["User"] == null || Session["Role"] == null)
                 Response.Redirect("../Login.aspx");
 
@@ -83,17 +87,17 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
                 gridCallog.Columns[0].Visible = true;
                 gridPatInsurance.Columns[0].Visible = true;
                 gridNotes.Columns[0].Visible = true;
-                
+
                 gridPatAllergies.Columns[1].Visible = true;
                 gridPayments.Columns[1].Visible = true;
                 gridPrisInfo.Columns[1].Visible = true;
                 gridCallog.Columns[1].Visible = true;
                 gridPatInsurance.Columns[1].Visible = true;
                 gridNotes.Columns[1].Visible = true;
-                
+
                 lnkAdjustBilling.Enabled = true;
 
-                
+
             }
             else
             {
@@ -110,7 +114,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
                     lnkAdjustBilling.Enabled = false;
                     lnkAddBilling.Enabled = false;
 
-                    Patient_Payments.Visible= false;
+                    Patient_Payments.Visible = false;
                     Billing.Visible = false;
                 }
 
@@ -127,16 +131,16 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
                 }
                 if ((string)Session["Role"] == "A" || (string)Session["Role"] == "T")
                 {
-                   
+
                     chkRx30Patient.Enabled = true;
                 }
                 else
                 {
-                   
+
                     chkRx30Patient.Enabled = false;
                 }
                 lnkAdjustBilling.Enabled = false;
- 
+
             }
 
             RenderJSArrayWithCliendIds(txtPatientName1, txtAllergyTo, txtAllergyDesc, txtInsName, txtInsPhone, txtPID, txtGNO, txtBNO, txtIName, txtIDOB, txtISSN, txtIRel, rbtnIActive, FileUpRxDoc, lblQtyinStock1, lblChequeorCC, lblCCAuth, lblCCAuth1, txtCCAuth, txtChequeorCC, txtPayAmount, lblDOB1, txtExpiryDate, txtTransAmt, txtTransDetails, rbtnPAPFilling, rbtnShippingCharges, chkTimeBilling, txtAdjBillAmt, txtAdjBillDetails, rbtnCredit, rbtnDebit, txtCallReason, txtCallLogDoctor, txtCallLogPharmacist, txtCallLogOther, txtCallDesc, rbtnMedicalIssueC, rbtnMedicalIssuePA, rbtnMedicalIssueA, rbtnMedicalIssueD, rbtnMedicalIssueN, rbtnMedicalIssueP, divCallLogFor);
@@ -155,7 +159,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
                     }
                 }
                 tabContainer.Enabled = false;
-               
+
                 if (Request.QueryString["patID"] != null)
                 {
                     btnMedLogReport.Visible = true;
@@ -165,7 +169,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
                 txtPayAmount.Focus();
                 ddlEditRxStatus.DataBind();
                 int refCount = int.Parse((string)ConfigurationManager.AppSettings["RefillCount"]);
-                for(int i=0;i<=refCount;i++)
+                for (int i = 0; i <= refCount; i++)
                 {
                     ListItem item = new ListItem();
                     item.Text = i.ToString();
@@ -173,19 +177,46 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
                     ddlEditRxRefills.Items.Add(item);
                 }
             }
+            
+            //
         }
         catch (Exception ex)
         {
             objNLog.Error("Error : " + ex.Message);
         }
     }
-    
+
+    public void ShowFeedBack()
+    {
+        string JSONObjectSurveyQuestion = SurveyQuestions.surveryQuestion();
+        Page.ClientScript.RegisterStartupScript(this.Page.GetType(), "key", "LoadSurveyJsonObject('" + JSONObjectSurveyQuestion + "');", true);
+    }
+
+    public void SavePatientFeedBack(string surveyQuestionResponse)
+    {
+        FeedBackSurvey feedback = new FeedBackSurvey();
+        feedback.User = (string)Session["User"];
+        feedback.Comments = "";
+        feedback.FacId = Convert.ToInt32(patFacID);
+        feedback.patientId = Convert.ToInt32(patID);
+        feedback.SurveyQuestionResponse = surveyQuestionResponse;
+
+
+        //feedback.QID = Convert.ToInt32("33");
+        //feedback.choice1_selected = Convert.ToInt32("1");
+        //feedback.choice2_selected = Convert.ToInt32("1");
+        //feedback.choice3_selected = Convert.ToInt32("0");
+        //feedback.choice4_selected = Convert.ToInt32("1");
+        //feedback.questionComments = "Testing Shomu";
+        SurveyQuestions.set_SurveyFeedback(feedback);
+    }
+
     protected void btnSearch_Click(object sender, ImageClickEventArgs e)
     {
         objNLog.Info("Patient Search Click Event Started...");
         try
         {
-            
+
             if (txtPatientName1.Text == string.Empty)
             {
                 lblMsg.Visible = true;
@@ -245,14 +276,14 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
         }
         objNLog.Info("Patient Search Click Event Completed...");
     }
-    
+
     protected void TabContainer1_ActiveTabChanged(object sender, EventArgs e)
     {
-        
+
 
         try
         {
-           // FillgridPatMedInfo();
+            // FillgridPatMedInfo();
             if (tabContainer.ActiveTabIndex == 0)
             {
                 FillgridPriscrition();
@@ -307,7 +338,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
             objNLog.Error("Error : " + ex.Message);
         }
     }
-    
+
     public void RenderJSArrayWithCliendIds(params Control[] wc)
     {
         try
@@ -351,18 +382,18 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
             foundRows = Pat_Names.Select("Pat_LName + ',' + Pat_FName ='" + patName + "'");
             if (foundRows.Length == 0)
             {
-                flag= true;
+                flag = true;
             }
             else
             {
                 if (foundRows.Length == 1)
                 {
-                    flag= true;
+                    flag = true;
                 }
                 else
                 {
                     listPatient(foundRows);
-                    flag= false;
+                    flag = false;
                 }
 
             }
@@ -378,7 +409,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
 
     protected void listPatient(DataRow[] Pat_Names)
     {
-       
+
         try
         {
             string hlist = "";
@@ -388,7 +419,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
 
                 hlist = hlist + @"<a href='javascript:void(0);' onclick=""PatSearch('" + Pat_Names[i][2].ToString() + @"');""> " + Pat_Names[i][0].ToString() + "," + Pat_Names[i][0].ToString() + " - " + Pat_Names[i][5].ToString() + "</a><br>";
             }
-           
+
 
 
             divpatList.Visible = true;
@@ -483,7 +514,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
     }
 
     #endregion
-    
+
 
     #region WebMethods
 
@@ -548,7 +579,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
         }
         else
         {
-                Med_List.Add(AjaxControlToolkit.AutoCompleteExtender.CreateAutoCompleteItem("No Medications Found!","0"));
+            Med_List.Add(AjaxControlToolkit.AutoCompleteExtender.CreateAutoCompleteItem("No Medications Found!", "0"));
         }
         return Med_List.ToArray();
     }
@@ -615,7 +646,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
         {
             String mname = "";
             if (dr[6].ToString().Trim() != mname)
-                mname = " "+ dr[6].ToString().Trim()+".";
+                mname = " " + dr[6].ToString().Trim() + ".";
             if ((string)HttpContext.Current.Session["Role"] == "A" || (string)HttpContext.Current.Session["Role"] == "T")
                 Pat_List.Add(AjaxControlToolkit.AutoCompleteExtender.CreateAutoCompleteItem(dr[1].ToString() + "," + dr[0].ToString() + mname + " -" + dr[5].ToString() + " - [ " + dr[7].ToString() + " ]", dr[2].ToString()));
             else
@@ -706,7 +737,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
                 objPat_Pat_Det.Pat_ID = 0;
             }
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             objNLog.Error("Error : " + ex.Message);
         }
@@ -726,8 +757,8 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
         }
         catch (Exception ex)
         {
-            objNLog.Error("Error : " + ex.Message);  
-        } 
+            objNLog.Error("Error : " + ex.Message);
+        }
         return results;
     }
 
@@ -973,7 +1004,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
 
                     lblAddress12.Text = address + dtPatientDetails.Rows[0]["Pat_State"].ToString() + " " + dtPatientDetails.Rows[0]["Pat_Zip"].ToString();
                     lblSAddress12.Text = Saddress + dtPatientDetails.Rows[0]["Pat_Ship_State"].ToString() + " " + dtPatientDetails.Rows[0]["Pat_Ship_Zip"].ToString();
-                   
+
                     lblPatientContact1.Text = dtPatientDetails.Rows[0]["Pat_Address1"].ToString() + "," + dtPatientDetails.Rows[0]["Pat_Address2"].ToString() + ", " + dtPatientDetails.Rows[0]["Pat_City"].ToString() + ", " + dtPatientDetails.Rows[0]["Pat_State"].ToString() + " " + dtPatientDetails.Rows[0]["Pat_Zip"].ToString() + ", " + FormatUSPhone(dtPatientDetails.Rows[0]["Pat_Phone"].ToString());
                     lblPatAccountName.Text = txtPatientName1.Text;
                     patID = (int)(dtPatientDetails.Rows[0]["Pat_ID"]);
@@ -1113,13 +1144,13 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
 
         gridNotes.DataSource = null;
         gridNotes.DataBind();
-       
+
         gridCallog.DataSource = null;
-        gridCallog.DataBind();       
+        gridCallog.DataBind();
 
         gridPayments.DataSource = null;
         gridPayments.DataBind();
-              
+
         gridShipLog.DataSource = null;
         gridShipLog.DataBind();
 
@@ -1187,7 +1218,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
             objNLog.Error("Error : " + ex.Message);
         }
     }
-    protected void gridPrisInfo_DataBound(object sender, GridViewRowEventArgs e) 
+    protected void gridPrisInfo_DataBound(object sender, GridViewRowEventArgs e)
     {
         try
         {
@@ -1205,12 +1236,12 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
                 }
                 else
                     lnkRxDoc.Visible = false;
-                if ((DataBinder.Eval(e.Row.DataItem, "RXStatusDesc")).ToString() == "Transmitted" && (string)Session["Role"] == "C") 
+                if ((DataBinder.Eval(e.Row.DataItem, "RXStatusDesc")).ToString() == "Transmitted" && (string)Session["Role"] == "C")
                 {
                     e.Row.Cells[8].Enabled = false;
                     e.Row.Cells[0].FindControl("lnkEditDrug").Visible = true;
                 }
-                if ((DataBinder.Eval(e.Row.DataItem, "RXStatusDesc")).ToString() != "Transmitted" && (string)Session["Role"] == "C") 
+                if ((DataBinder.Eval(e.Row.DataItem, "RXStatusDesc")).ToString() != "Transmitted" && (string)Session["Role"] == "C")
                 {
                     e.Row.Cells[1].FindControl("lnkDeleteDrug").Visible = false;
                     e.Row.Cells[0].FindControl("lnkEditDrug").Visible = false;
@@ -1267,7 +1298,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
                     e.Row.Cells[0].FindControl("lnkEditDrug").Visible = true;
                     e.Row.Cells[1].FindControl("lnkDeleteDrug").Visible = true;
                 }
-                
+
                 if ((DataBinder.Eval(e.Row.DataItem, "Rx_SysFlag")).ToString() == "P")
                 {
                     if ((string)Session["Role"] == "A" || (string)Session["Role"] == "T")
@@ -1315,7 +1346,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
                 key = 1;
             else
                 key = 0;
-            objPat_Info.delete_patPrescriptionMedInfo(userID, key, lblRxItemID.Text,int.Parse((string)hidPatID.Value));
+            objPat_Info.delete_patPrescriptionMedInfo(userID, key, lblRxItemID.Text, int.Parse((string)hidPatID.Value));
             FillgridPriscrition();
         }
         catch (Exception ex)
@@ -1404,36 +1435,36 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
                 GridViewRow selectedRow = (GridViewRow)((LinkButton)e.CommandSource).NamingContainer;
                 int intRowIndex = Convert.ToInt32(selectedRow.RowIndex);
                 Label lblRxItemID = (Label)gridPrisInfo.Rows[intRowIndex].FindControl("lblRXItem_ID");
-                
-               // DataTable dtRxDoc  = objPat_Info.GetPatRxDocument(int.Parse(lblRxItemID.Text));
+
+                // DataTable dtRxDoc  = objPat_Info.GetPatRxDocument(int.Parse(lblRxItemID.Text));
 
                 LinkButton lnkRxDoc = (LinkButton)gridPrisInfo.Rows[intRowIndex].FindControl("lnkRxAttachment");
 
-              //  if (dtRxDoc.Rows.Count > 0)
-              //  {
-              //      if (dtRxDoc.Rows[0][0] != DBNull.Value)
-              //      {
-              //          if (Session["image"] != null) 
-              //          {
-              //              Session["image"] = null;
-              //          } 
-                      
-              //          ////System.Drawing.Image newImage;
-              //          byte[] rxDoc = (byte[])dtRxDoc.Rows[0][0];
-              //          Session["image"] = rxDoc;
-              //          imgRxDoc.ImageUrl = "RxAttachment.aspx";
-              //          MPERxAttachment.Show();
-              //}
-              //  }
+                //  if (dtRxDoc.Rows.Count > 0)
+                //  {
+                //      if (dtRxDoc.Rows[0][0] != DBNull.Value)
+                //      {
+                //          if (Session["image"] != null) 
+                //          {
+                //              Session["image"] = null;
+                //          } 
 
-                        imgRxDoc.ImageUrl = "RxAttachment.aspx?RxItemID=" + lblRxItemID.Text;
-                        MPERxAttachment.Show();
-                    
-           
+                //          ////System.Drawing.Image newImage;
+                //          byte[] rxDoc = (byte[])dtRxDoc.Rows[0][0];
+                //          Session["image"] = rxDoc;
+                //          imgRxDoc.ImageUrl = "RxAttachment.aspx";
+                //          MPERxAttachment.Show();
+                //}
+                //  }
+
+                imgRxDoc.ImageUrl = "RxAttachment.aspx?RxItemID=" + lblRxItemID.Text;
+                MPERxAttachment.Show();
+
+
 
                 //Added Doctor Signature Upload - END.
             }
-            
+
             if (e.CommandName == "Refill")
             {
                 objPat_Info.Refill_patPrescriptionMedInfo(e.CommandArgument.ToString(), (string)Session["User"], int.Parse((string)hidPatID.Value));
@@ -1542,7 +1573,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
         }
         else
         {
-              
+
             //if (rbtnProcessingType.SelectedValue == "S")
             //{
             //    sqlQuery = "Insert INTO Drug_Inventory   ([Inv_Group_Code],[Inv_Trans_Code],[Inv_Date],[Drug_ID],[Qty],[Inv_Desc],[Drug_Form],Pat_ID,Facility_ID,Lot_Num,Expiry_Date,LastModified,LastModifiedBy,Clinic_ID)    VALUES ('"
@@ -1572,7 +1603,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
 
                 if (ddlProcessingStatus.SelectedValue != "R")
                 {
-                    objPat_Info.Update_Drug_Info(int.Parse(hfRXItemID.Value),userID);
+                    objPat_Info.Update_Drug_Info(int.Parse(hfRXItemID.Value), userID);
                 }
                 //sqlCmd = new SqlCommand(sqlQuery, sqlCon);
                 //sqlCon.Open();
@@ -1580,7 +1611,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
 
                 //if (ddlProcessingStatus.SelectedValue != "R")
                 //    objUALog.LogUserActivity(conStr, userID, "Updated field Rx_Status='D' where Rx_ItemID=" + hfRXItemID.Value + " while saving process info.", "Rx_Drug_Info", 0);
-                
+
                 //if (rbtnProcessingType.SelectedValue == "S")
                 //    objUALog.LogUserActivity(conStr, userID, "Inserted Record into table while saving process info.", "Drug_Inventory", 0);
             }
@@ -1598,9 +1629,9 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
     }
     protected void btn_DC_Save_Click(object sender, EventArgs e)
     {
-        
+
         SqlConnection sqlCon = new SqlConnection(conStr);
-        
+
         //string sqlQuery = "";
         string userID = (string)Session["User"];
 
@@ -1608,21 +1639,21 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
         try
         {
             //sqlCmd = new SqlCommand(sqlQuery, sqlCon);
-            SqlCommand sqlCmd=new SqlCommand("sp_Update_RxDrugInfo_DC_Status", sqlCon);
+            SqlCommand sqlCmd = new SqlCommand("sp_Update_RxDrugInfo_DC_Status", sqlCon);
             sqlCmd.CommandType = CommandType.StoredProcedure;
 
             SqlParameter sp_RxItemID = sqlCmd.Parameters.Add("@Rx_ItemID", SqlDbType.Int);
-            sp_RxItemID.Value=int.Parse(hfDC_RXItemID.Value);
+            sp_RxItemID.Value = int.Parse(hfDC_RXItemID.Value);
 
             SqlParameter sp_Rx_Status = sqlCmd.Parameters.Add("@Rx_Status", SqlDbType.Char, 1);
             sp_Rx_Status.Value = 'X';
 
-            SqlParameter sp_Rx_Comments = sqlCmd.Parameters.Add("@Rx_Comments", SqlDbType.VarChar,1000);
+            SqlParameter sp_Rx_Comments = sqlCmd.Parameters.Add("@Rx_Comments", SqlDbType.VarChar, 1000);
             sp_Rx_Comments.Value = txtDCComments.Text;
 
-            SqlParameter sp_Rx_ApprovedBy = sqlCmd.Parameters.Add("@Rx_ApprovedBy", SqlDbType.VarChar,50);
+            SqlParameter sp_Rx_ApprovedBy = sqlCmd.Parameters.Add("@Rx_ApprovedBy", SqlDbType.VarChar, 50);
             sp_Rx_ApprovedBy.Value = userID;
-           
+
             sqlCon.Open();
 
             sqlCmd.ExecuteNonQuery();
@@ -1644,163 +1675,163 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
         objNLog.Info("Save Prescription Click Event Started...");
         //if (CheckIfDuplicateRequest() )
         //{
-       //     FillgridPriscrition();
-       // }
+        //     FillgridPriscrition();
+        // }
         //else
-       // {
-            PatinetMedHistoryInfo objPat_Med_His_Info = new PatinetMedHistoryInfo();
-            string userID = (string)Session["User"];
+        // {
+        PatinetMedHistoryInfo objPat_Med_His_Info = new PatinetMedHistoryInfo();
+        string userID = (string)Session["User"];
 
-            // if (objPat_Info.get_MedicationNames(txt_P_Med.Text).Rows.Count <= 0)
-            // {
-                //objPat_Info.set_newMedication(userID, txt_P_Med.Text);
-            // }
+        // if (objPat_Info.get_MedicationNames(txt_P_Med.Text).Rows.Count <= 0)
+        // {
+        //objPat_Info.set_newMedication(userID, txt_P_Med.Text);
+        // }
 
-            int DrugID = objPat_Info.Get_MedID(txt_P_Med.Text);
+        int DrugID = objPat_Info.Get_MedID(txt_P_Med.Text);
 
-            int DocID = objPat_Info.Get_DocID(txtDocName.Text);
+        int DocID = objPat_Info.Get_DocID(txtDocName.Text);
 
-            if (DocID > 0 && DrugID > 0)
+        if (DocID > 0 && DrugID > 0)
+        {
+            string Pharmacy = "Adio Pharmacy";
+            if (rbtnOtherPharmacy.Checked)
+                Pharmacy = txtPharmacy.Text;
+            string rxtype = "";
+            if (rbtnPAP.Checked)
+                rxtype = "P";
+            if (rbtnSample.Checked)
+                rxtype = "S";
+            if (rbtnRegular.Checked)
+                rxtype = "R";
+
+            SqlConnection sqlCon = new SqlConnection(conStr);
+            SqlCommand sqlCmd = new SqlCommand("SetRXData", sqlCon);
+            sqlCmd.CommandType = CommandType.StoredProcedure;
+            sqlCmd.CommandTimeout = 0;
+            try
             {
-                string Pharmacy = "Adio Pharmacy";
-                if (rbtnOtherPharmacy.Checked)
-                    Pharmacy = txtPharmacy.Text;
-                string rxtype = "";
-                if (rbtnPAP.Checked)
-                    rxtype = "P";
-                if (rbtnSample.Checked)
-                    rxtype = "S";
-                if (rbtnRegular.Checked)
-                    rxtype = "R";
-
-                SqlConnection sqlCon = new SqlConnection(conStr);
-                SqlCommand sqlCmd = new SqlCommand("SetRXData", sqlCon);
-                sqlCmd.CommandType = CommandType.StoredProcedure;
-                sqlCmd.CommandTimeout = 0;
-                try
+                if (hidRXID.Value == "")
                 {
-                    if (hidRXID.Value == "")
-                    {
-                        SqlParameter sql_Doc_ID = sqlCmd.Parameters.Add("@Doc_ID", SqlDbType.Int);
-                        sql_Doc_ID.Value = DocID;
-                        SqlParameter sql_Rx_PharmacyName = sqlCmd.Parameters.Add("@Rx_PharmacyName", SqlDbType.VarChar, 50);
-                        sql_Rx_PharmacyName.Value = Pharmacy;
-                    }
-                    else
-                    {
-                        SqlParameter sql_Rx_ID = sqlCmd.Parameters.Add("@Rx_ID", SqlDbType.Int);
-                        sql_Rx_ID.Value = int.Parse(hidRXID.Value);
-                    }
-                    SqlParameter sql_Pat_ID = sqlCmd.Parameters.Add("@Pat_ID", SqlDbType.Int);
-                    sql_Pat_ID.Value = int.Parse(hidPatID.Value);
-                    SqlParameter sql_Rx_Type = sqlCmd.Parameters.Add("@Rx_Type", SqlDbType.Char, 1);
-                    sql_Rx_Type.Value = rxtype;
-                    SqlParameter sql_Rx_DrugName = sqlCmd.Parameters.Add("@Rx_DrugName", SqlDbType.VarChar, 50);
-                    sql_Rx_DrugName.Value = txt_P_Med.Text.Trim();
-                    SqlParameter sql_Rx_Qty = sqlCmd.Parameters.Add("@Rx_Qty", SqlDbType.Int);
-                    sql_Rx_Qty.Value = txt_P_Qty.Text;
-                    SqlParameter sql_Rx_Refills = sqlCmd.Parameters.Add("@Rx_Refills", SqlDbType.Int);
-                    sql_Rx_Refills.Value = ddl_P_Refills.SelectedValue;
-                    //Added for SIG Codes Description - START.
-                    string[] sig;
-                    if (txt_P_sig.Text != "" && txt_P_sig.Text.Contains("||"))
-                    {
-                        sig = txt_P_sig.Text.Split(new string[] { "||" }, StringSplitOptions.None);
-                        objPat_Med_His_Info.SIG = sig[1].TrimStart().ToString();
-                    }
-                    else
-                        objPat_Med_His_Info.SIG = txt_P_sig.Text;
-
-                    SqlParameter sql_Rx_SIG = sqlCmd.Parameters.Add("@Rx_SIG", SqlDbType.VarChar, 50);
-                    sql_Rx_SIG.Value = objPat_Med_His_Info.SIG;
-                    //Added for SIG Codes Description - END.
-                    SqlParameter sql_Rx_Status = sqlCmd.Parameters.Add("@Rx_Status", SqlDbType.Char, 1);
-                    sql_Rx_Status.Value = ddl_P_Status.SelectedValue;
-
-                   
-
-                    SqlParameter sql_Rx_Comments = sqlCmd.Parameters.Add("@Rx_Comments", SqlDbType.VarChar, 1000);
-                    sql_Rx_Comments.Value = txtRxComments.Text;
-
-                    SqlParameter sql_Rx_MBy = sqlCmd.Parameters.Add("@Rx_ModifiedBy", SqlDbType.VarChar, 50);
-                    sql_Rx_MBy.Value = (string)Session["User"];
-
-                    SqlParameter sql_Rx_FillDate = sqlCmd.Parameters.Add("@Rx_FillDate", SqlDbType.VarChar, 50);
-                    sql_Rx_FillDate.Value = txtFillDate.Text;
-                    if (txtFillDate.Text.Trim() == "")
-                        sql_Rx_FillDate.Value = DateTime.Now.ToShortDateString();
-
-
-                    //Added for Rx Document Attachment 
-
-                    byte[] rxDoc = null;
-                    if (FileUpRxDoc.PostedFile != null && FileUpRxDoc.PostedFile.FileName != "")
-                    {
-                        rxDoc = new byte[FileUpRxDoc.PostedFile.ContentLength];
-                        HttpPostedFile Image = FileUpRxDoc.PostedFile;
-                        Image.InputStream.Read(rxDoc, 0, (int)FileUpRxDoc.PostedFile.ContentLength);
-                    }
-
-                    SqlParameter Rx_Doc = sqlCmd.Parameters.Add("@Rx_Doc", SqlDbType.Image);
-                    if (rxDoc != null)
-                        Rx_Doc.Value = rxDoc;
-                    else
-                        Rx_Doc.Value = Convert.DBNull;
-                    //Added for Rx Document Attachment 
-
-                    SqlParameter sql_Rx_SysFlag = sqlCmd.Parameters.Add("@Rx_SysFlag", SqlDbType.VarChar, 50);
-                    if(chkRx30Patient.Checked==true)
-                        sql_Rx_SysFlag.Value = "P";
-                    else
-                        sql_Rx_SysFlag.Value = "R";
-
-                    SqlParameter sql_RXID = sqlCmd.Parameters.Add("@RXID", SqlDbType.Int);
-                    sql_RXID.Direction = ParameterDirection.Output;
-
-                    sqlCon.Open();
-                    sqlCmd.ExecuteNonQuery();
-                    objUALog.LogUserActivity(conStr, userID, "Added New Prescription(Rx) Info. RxID = " + sql_RXID.Value.ToString(), "Patient_Rx, Rx_Drug_Info", int.Parse((string)hidPatID.Value));
-                    FillgridPriscrition();
-                    //Session["DupRxRecord"] = txt_P_Med.Text;
-                    //Session["DupPatRecord"] = hidPatID.Value;
-                    //Session["DupRxFillDt"] = txtFillDate.Text;
-                    rbtnAdioPharmacy.Checked = true;
-                    rbtnOtherPharmacy.Checked = false;
-                    lblPresStatus.Text = "";
-                    //lblPresStatus.Visible = false;
-                    lblPresStatus.Attributes.CssStyle[HtmlTextWriterStyle.Visibility] = "hidden";
-                    Response.Redirect("AllPatientProfile.aspx?patID=" + hidPatID.Value.ToString());
-
+                    SqlParameter sql_Doc_ID = sqlCmd.Parameters.Add("@Doc_ID", SqlDbType.Int);
+                    sql_Doc_ID.Value = DocID;
+                    SqlParameter sql_Rx_PharmacyName = sqlCmd.Parameters.Add("@Rx_PharmacyName", SqlDbType.VarChar, 50);
+                    sql_Rx_PharmacyName.Value = Pharmacy;
                 }
-                catch (Exception ex)
+                else
                 {
-                    objNLog.Error("Error : " + ex.Message);
+                    SqlParameter sql_Rx_ID = sqlCmd.Parameters.Add("@Rx_ID", SqlDbType.Int);
+                    sql_Rx_ID.Value = int.Parse(hidRXID.Value);
                 }
-                finally
+                SqlParameter sql_Pat_ID = sqlCmd.Parameters.Add("@Pat_ID", SqlDbType.Int);
+                sql_Pat_ID.Value = int.Parse(hidPatID.Value);
+                SqlParameter sql_Rx_Type = sqlCmd.Parameters.Add("@Rx_Type", SqlDbType.Char, 1);
+                sql_Rx_Type.Value = rxtype;
+                SqlParameter sql_Rx_DrugName = sqlCmd.Parameters.Add("@Rx_DrugName", SqlDbType.VarChar, 50);
+                sql_Rx_DrugName.Value = txt_P_Med.Text.Trim();
+                SqlParameter sql_Rx_Qty = sqlCmd.Parameters.Add("@Rx_Qty", SqlDbType.Int);
+                sql_Rx_Qty.Value = txt_P_Qty.Text;
+                SqlParameter sql_Rx_Refills = sqlCmd.Parameters.Add("@Rx_Refills", SqlDbType.Int);
+                sql_Rx_Refills.Value = ddl_P_Refills.SelectedValue;
+                //Added for SIG Codes Description - START.
+                string[] sig;
+                if (txt_P_sig.Text != "" && txt_P_sig.Text.Contains("||"))
                 {
-                    sqlCon.Close();
+                    sig = txt_P_sig.Text.Split(new string[] { "||" }, StringSplitOptions.None);
+                    objPat_Med_His_Info.SIG = sig[1].TrimStart().ToString();
+                }
+                else
+                    objPat_Med_His_Info.SIG = txt_P_sig.Text;
+
+                SqlParameter sql_Rx_SIG = sqlCmd.Parameters.Add("@Rx_SIG", SqlDbType.VarChar, 50);
+                sql_Rx_SIG.Value = objPat_Med_His_Info.SIG;
+                //Added for SIG Codes Description - END.
+                SqlParameter sql_Rx_Status = sqlCmd.Parameters.Add("@Rx_Status", SqlDbType.Char, 1);
+                sql_Rx_Status.Value = ddl_P_Status.SelectedValue;
+
+
+
+                SqlParameter sql_Rx_Comments = sqlCmd.Parameters.Add("@Rx_Comments", SqlDbType.VarChar, 1000);
+                sql_Rx_Comments.Value = txtRxComments.Text;
+
+                SqlParameter sql_Rx_MBy = sqlCmd.Parameters.Add("@Rx_ModifiedBy", SqlDbType.VarChar, 50);
+                sql_Rx_MBy.Value = (string)Session["User"];
+
+                SqlParameter sql_Rx_FillDate = sqlCmd.Parameters.Add("@Rx_FillDate", SqlDbType.VarChar, 50);
+                sql_Rx_FillDate.Value = txtFillDate.Text;
+                if (txtFillDate.Text.Trim() == "")
+                    sql_Rx_FillDate.Value = DateTime.Now.ToShortDateString();
+
+
+                //Added for Rx Document Attachment 
+
+                byte[] rxDoc = null;
+                if (FileUpRxDoc.PostedFile != null && FileUpRxDoc.PostedFile.FileName != "")
+                {
+                    rxDoc = new byte[FileUpRxDoc.PostedFile.ContentLength];
+                    HttpPostedFile Image = FileUpRxDoc.PostedFile;
+                    Image.InputStream.Read(rxDoc, 0, (int)FileUpRxDoc.PostedFile.ContentLength);
                 }
 
+                SqlParameter Rx_Doc = sqlCmd.Parameters.Add("@Rx_Doc", SqlDbType.Image);
+                if (rxDoc != null)
+                    Rx_Doc.Value = rxDoc;
+                else
+                    Rx_Doc.Value = Convert.DBNull;
+                //Added for Rx Document Attachment 
+
+                SqlParameter sql_Rx_SysFlag = sqlCmd.Parameters.Add("@Rx_SysFlag", SqlDbType.VarChar, 50);
+                if (chkRx30Patient.Checked == true)
+                    sql_Rx_SysFlag.Value = "P";
+                else
+                    sql_Rx_SysFlag.Value = "R";
+
+                SqlParameter sql_RXID = sqlCmd.Parameters.Add("@RXID", SqlDbType.Int);
+                sql_RXID.Direction = ParameterDirection.Output;
+
+                sqlCon.Open();
+                sqlCmd.ExecuteNonQuery();
+                objUALog.LogUserActivity(conStr, userID, "Added New Prescription(Rx) Info. RxID = " + sql_RXID.Value.ToString(), "Patient_Rx, Rx_Drug_Info", int.Parse((string)hidPatID.Value));
+                FillgridPriscrition();
+                //Session["DupRxRecord"] = txt_P_Med.Text;
+                //Session["DupPatRecord"] = hidPatID.Value;
+                //Session["DupRxFillDt"] = txtFillDate.Text;
+                rbtnAdioPharmacy.Checked = true;
+                rbtnOtherPharmacy.Checked = false;
+                lblPresStatus.Text = "";
+                //lblPresStatus.Visible = false;
+                lblPresStatus.Attributes.CssStyle[HtmlTextWriterStyle.Visibility] = "hidden";
+                Response.Redirect("AllPatientProfile.aspx?patID=" + hidPatID.Value.ToString());
+
             }
-            else if (DrugID == 0)
+            catch (Exception ex)
             {
-               // lblPresStatus.Visible = true;
-                lblPresStatus.Attributes.CssStyle[HtmlTextWriterStyle.Visibility] = "visible";
-
-                lblPresStatus.Text="Error: Invalid Drug Name..!";
-                addPrescription.Show();
-
+                objNLog.Error("Error : " + ex.Message);
             }
-            else if (DocID == 0)
+            finally
             {
-                //lblPresStatus.Visible = true;
-                lblPresStatus.Attributes.CssStyle[HtmlTextWriterStyle.Visibility] = "visible";
-
-                lblPresStatus.Text = "Error: Invalid Doctor Name..!";
-                addPrescription.Show();
-
+                sqlCon.Close();
             }
-             
+
+        }
+        else if (DrugID == 0)
+        {
+            // lblPresStatus.Visible = true;
+            lblPresStatus.Attributes.CssStyle[HtmlTextWriterStyle.Visibility] = "visible";
+
+            lblPresStatus.Text = "Error: Invalid Drug Name..!";
+            addPrescription.Show();
+
+        }
+        else if (DocID == 0)
+        {
+            //lblPresStatus.Visible = true;
+            lblPresStatus.Attributes.CssStyle[HtmlTextWriterStyle.Visibility] = "visible";
+
+            lblPresStatus.Text = "Error: Invalid Doctor Name..!";
+            addPrescription.Show();
+
+        }
+
         //}
         objNLog.Info("Save Prescription Click Event Completed...");
     }
@@ -1821,7 +1852,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
             if (rbtnEditRxTypeP.Checked == true) rxType = 'P';
 
             if (chkSetRxDate.Checked == true) setrxdate = 'Y';
-           
+
             byte[] rxDoc = null;
             if (fupEditRxDoc.PostedFile != null && fupEditRxDoc.PostedFile.FileName != "")
             {
@@ -1830,7 +1861,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
                 Image.InputStream.Read(rxDoc, 0, (int)fupEditRxDoc.PostedFile.ContentLength);
             }
 
-         
+
             objPat_Info.update_patPrescriptionMedInfo(userID, key, txtEditDrugName.Text.Trim(), int.Parse(txtEditQty.Text), txtEditSIG.Text.Trim(), int.Parse(ddlEditRxRefills.SelectedValue), char.Parse(ddlEditRxStatus.SelectedValue), rxType, int.Parse(hidRxItemID.Value.ToString()), int.Parse(hidPatID.Value.ToString()), txtEditRxCmt.Text, setrxdate, txtEditFillDate.Text, rxDoc);
             gridPrisInfo.EditIndex = -1;
             FillgridPriscrition();
@@ -1849,171 +1880,171 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
         //}
         //else
         //{
-            PatinetMedHistoryInfo objPat_Med_His_Info = new PatinetMedHistoryInfo();
-            string userID = (string)Session["User"];
-            int DocID = objPat_Info.Get_DocID(txtDocName.Text);
-            int DrugID = objPat_Info.Get_MedID(txt_P_Med.Text);
+        PatinetMedHistoryInfo objPat_Med_His_Info = new PatinetMedHistoryInfo();
+        string userID = (string)Session["User"];
+        int DocID = objPat_Info.Get_DocID(txtDocName.Text);
+        int DrugID = objPat_Info.Get_MedID(txt_P_Med.Text);
 
-            if (DocID > 0 && DrugID > 0)
+        if (DocID > 0 && DrugID > 0)
+        {
+            string Pharmacy = "AdiO Pharmacy";
+            if (rbtnOtherPharmacy.Checked)
             {
-                string Pharmacy = "AdiO Pharmacy";
-                if (rbtnOtherPharmacy.Checked)
-                {
-                    if (txtPharmacy.Text.Trim() == "")
-                        Pharmacy = "Other Pharmacy";
-                    else
-                        Pharmacy = txtPharmacy.Text;
-                }
-
-                string rxtype = "";
-                if (rbtnPAP.Checked)
-                    rxtype = "P";
-                if (rbtnSample.Checked)
-                    rxtype = "S";
-                if (rbtnRegular.Checked)
-                    rxtype = "R";
-                SqlConnection sqlCon = new SqlConnection(conStr);
-                SqlCommand sqlCmd = new SqlCommand("SetRXData", sqlCon);
-                sqlCmd.CommandType = CommandType.StoredProcedure;
-                sqlCmd.CommandTimeout = 0;
-
-                try
-                {
-                    if (hidRXID.Value == "")
-                    {
-                        SqlParameter sql_Doc_ID = sqlCmd.Parameters.Add("@Doc_ID", SqlDbType.Int);
-                        sql_Doc_ID.Value = DocID;
-
-                        SqlParameter sql_Rx_PharmacyName = sqlCmd.Parameters.Add("@Rx_PharmacyName", SqlDbType.VarChar, 50);
-                        sql_Rx_PharmacyName.Value = Pharmacy;
-                    }
-                    else
-                    {
-                        SqlParameter sql_Rx_ID = sqlCmd.Parameters.Add("@Rx_ID", SqlDbType.Int);
-                        sql_Rx_ID.Value = int.Parse(hidRXID.Value);
-                    }
-
-                    SqlParameter sql_Pat_ID = sqlCmd.Parameters.Add("@Pat_ID", SqlDbType.Int);
-                    sql_Pat_ID.Value = int.Parse(hidPatID.Value);
-                    SqlParameter sql_Rx_Type = sqlCmd.Parameters.Add("@Rx_Type", SqlDbType.Char, 1);
-                    sql_Rx_Type.Value = rxtype;
-                    SqlParameter sql_Rx_DrugName = sqlCmd.Parameters.Add("@Rx_DrugName", SqlDbType.VarChar, 50);
-                    sql_Rx_DrugName.Value = txt_P_Med.Text.Trim();
-                    SqlParameter sql_Rx_Qty = sqlCmd.Parameters.Add("@Rx_Qty", SqlDbType.Int);
-                    sql_Rx_Qty.Value = txt_P_Qty.Text;
-                    SqlParameter sql_Rx_Refills = sqlCmd.Parameters.Add("@Rx_Refills", SqlDbType.Int);
-                    sql_Rx_Refills.Value = ddl_P_Refills.SelectedValue;
-                    //Added for SIG Codes Description - START.
-                    string[] sig;
-                    if (txt_P_sig.Text != "" && txt_P_sig.Text.Contains("||"))
-                    {
-                        sig = txt_P_sig.Text.Split(new string[] { "||" }, StringSplitOptions.None);
-                        objPat_Med_His_Info.SIG = sig[1].TrimStart().ToString();
-                    }
-                    else
-                        objPat_Med_His_Info.SIG = txt_P_sig.Text;
-
-                    SqlParameter sql_Rx_SIG = sqlCmd.Parameters.Add("@Rx_SIG", SqlDbType.VarChar, 50);
-                    sql_Rx_SIG.Value = objPat_Med_His_Info.SIG;
-                    //Added for SIG Codes Description - END.
-                    SqlParameter sql_Rx_Status = sqlCmd.Parameters.Add("@Rx_Status", SqlDbType.Char, 1);
-                    sql_Rx_Status.Value = ddl_P_Status.SelectedValue;
-
-                   
-
-                    SqlParameter sql_Rx_Comments = sqlCmd.Parameters.Add("@Rx_Comments", SqlDbType.VarChar, 1000);
-                    sql_Rx_Comments.Value = txtRxComments.Text;
-
-                    SqlParameter sql_Rx_FillDate = sqlCmd.Parameters.Add("@Rx_FillDate", SqlDbType.VarChar, 50);
-                    sql_Rx_FillDate.Value = txtFillDate.Text;
-                    if (txtFillDate.Text.Trim() == "")
-                        sql_Rx_FillDate.Value = DateTime.Now.ToShortDateString();
-
-                    SqlParameter sql_Rx_MBy = sqlCmd.Parameters.Add("@Rx_ModifiedBy", SqlDbType.VarChar, 50);
-                    sql_Rx_MBy.Value = (string)Session["User"];
-
-                    //Added for Rx Document Attachment 
-                    byte[] rxDoc = null;
-                    if (FileUpRxDoc.PostedFile != null && FileUpRxDoc.PostedFile.FileName != "")
-                    {
-                        rxDoc = new byte[FileUpRxDoc.PostedFile.ContentLength];
-                        HttpPostedFile Image = FileUpRxDoc.PostedFile;
-                        Image.InputStream.Read(rxDoc, 0, (int)FileUpRxDoc.PostedFile.ContentLength);
-                    }
-
-                    SqlParameter Rx_Doc = sqlCmd.Parameters.Add("@Rx_Doc", SqlDbType.Image);
-                    if (rxDoc != null)
-                        Rx_Doc.Value = rxDoc;
-                    else
-                        Rx_Doc.Value = Convert.DBNull;
-
-                    SqlParameter sql_Rx_SysFlag = sqlCmd.Parameters.Add("@Rx_SysFlag", SqlDbType.VarChar, 50);
-                    if (chkRx30Patient.Checked == true)
-                        sql_Rx_SysFlag.Value = "P";
-                    else
-                        sql_Rx_SysFlag.Value = "R";
-
-
-                    //Added for Rx Document Attachment
-
-                    SqlParameter sql_RXID = sqlCmd.Parameters.Add("@RXID", SqlDbType.Int);
-                    sql_RXID.Direction = ParameterDirection.Output;
-                    sqlCon.Open();
-                    sqlCmd.ExecuteNonQuery();
-                    objUALog.LogUserActivity(conStr, userID, "Added New Prescription(Rx) Info. RxID = " + sql_RXID.Value.ToString(), "Patient_Rx, Rx_Drug_Info", int.Parse((string)hidPatID.Value));
-                    FillgridPriscrition();
-                    hidRXID.Value = sql_RXID.Value.ToString();
-                    txtDocName.Enabled = false;
-                    addPrescription.Show();
-                    rbtnAdioPharmacy.Checked = true;
-                    rbtnOtherPharmacy.Checked = false;
-                    txt_P_Med.Text = "";
-                    txt_P_Qty.Text = "";
-                    txt_P_sig.Text = "";
-                    txtRxComments.Text = "";
-                    ddl_P_Refills.SelectedIndex = 0;
-                    ddl_P_Status.SelectedIndex = 0;
-                    txtFillDate.Text = DateTime.Now.ToShortDateString();
-                    rbtnRegular.Checked = true;
-                    //Session["DupRxRecord"] = txt_P_Med.Text;
-                    //Session["DupPatRecord"] = hidPatID.Value;
-                    //Session["DupRxFillDt"] = txtFillDate.Text;
-                    lblPresStatus.Text = "";
-                    lblPresStatus.Attributes.CssStyle[HtmlTextWriterStyle.Visibility] = "hidden";
-
-                    //lblPresStatus.Visible = false;
-
-                }
-                catch (Exception ex)
-                {
-                    objNLog.Error("Error : " + ex.Message);
-                }
-                finally
-                {
-                    sqlCon.Close();
-                }
+                if (txtPharmacy.Text.Trim() == "")
+                    Pharmacy = "Other Pharmacy";
+                else
+                    Pharmacy = txtPharmacy.Text;
             }
-            else if (DrugID == 0)
-            {
-                //lblPresStatus.Visible = true;
-                lblPresStatus.Attributes.CssStyle[HtmlTextWriterStyle.Visibility] = "visible";
 
-                lblMsg.ForeColor = System.Drawing.Color.Red;
-                lblPresStatus.Text = "Error: Invalid Drug Name..!";
+            string rxtype = "";
+            if (rbtnPAP.Checked)
+                rxtype = "P";
+            if (rbtnSample.Checked)
+                rxtype = "S";
+            if (rbtnRegular.Checked)
+                rxtype = "R";
+            SqlConnection sqlCon = new SqlConnection(conStr);
+            SqlCommand sqlCmd = new SqlCommand("SetRXData", sqlCon);
+            sqlCmd.CommandType = CommandType.StoredProcedure;
+            sqlCmd.CommandTimeout = 0;
+
+            try
+            {
+                if (hidRXID.Value == "")
+                {
+                    SqlParameter sql_Doc_ID = sqlCmd.Parameters.Add("@Doc_ID", SqlDbType.Int);
+                    sql_Doc_ID.Value = DocID;
+
+                    SqlParameter sql_Rx_PharmacyName = sqlCmd.Parameters.Add("@Rx_PharmacyName", SqlDbType.VarChar, 50);
+                    sql_Rx_PharmacyName.Value = Pharmacy;
+                }
+                else
+                {
+                    SqlParameter sql_Rx_ID = sqlCmd.Parameters.Add("@Rx_ID", SqlDbType.Int);
+                    sql_Rx_ID.Value = int.Parse(hidRXID.Value);
+                }
+
+                SqlParameter sql_Pat_ID = sqlCmd.Parameters.Add("@Pat_ID", SqlDbType.Int);
+                sql_Pat_ID.Value = int.Parse(hidPatID.Value);
+                SqlParameter sql_Rx_Type = sqlCmd.Parameters.Add("@Rx_Type", SqlDbType.Char, 1);
+                sql_Rx_Type.Value = rxtype;
+                SqlParameter sql_Rx_DrugName = sqlCmd.Parameters.Add("@Rx_DrugName", SqlDbType.VarChar, 50);
+                sql_Rx_DrugName.Value = txt_P_Med.Text.Trim();
+                SqlParameter sql_Rx_Qty = sqlCmd.Parameters.Add("@Rx_Qty", SqlDbType.Int);
+                sql_Rx_Qty.Value = txt_P_Qty.Text;
+                SqlParameter sql_Rx_Refills = sqlCmd.Parameters.Add("@Rx_Refills", SqlDbType.Int);
+                sql_Rx_Refills.Value = ddl_P_Refills.SelectedValue;
+                //Added for SIG Codes Description - START.
+                string[] sig;
+                if (txt_P_sig.Text != "" && txt_P_sig.Text.Contains("||"))
+                {
+                    sig = txt_P_sig.Text.Split(new string[] { "||" }, StringSplitOptions.None);
+                    objPat_Med_His_Info.SIG = sig[1].TrimStart().ToString();
+                }
+                else
+                    objPat_Med_His_Info.SIG = txt_P_sig.Text;
+
+                SqlParameter sql_Rx_SIG = sqlCmd.Parameters.Add("@Rx_SIG", SqlDbType.VarChar, 50);
+                sql_Rx_SIG.Value = objPat_Med_His_Info.SIG;
+                //Added for SIG Codes Description - END.
+                SqlParameter sql_Rx_Status = sqlCmd.Parameters.Add("@Rx_Status", SqlDbType.Char, 1);
+                sql_Rx_Status.Value = ddl_P_Status.SelectedValue;
+
+
+
+                SqlParameter sql_Rx_Comments = sqlCmd.Parameters.Add("@Rx_Comments", SqlDbType.VarChar, 1000);
+                sql_Rx_Comments.Value = txtRxComments.Text;
+
+                SqlParameter sql_Rx_FillDate = sqlCmd.Parameters.Add("@Rx_FillDate", SqlDbType.VarChar, 50);
+                sql_Rx_FillDate.Value = txtFillDate.Text;
+                if (txtFillDate.Text.Trim() == "")
+                    sql_Rx_FillDate.Value = DateTime.Now.ToShortDateString();
+
+                SqlParameter sql_Rx_MBy = sqlCmd.Parameters.Add("@Rx_ModifiedBy", SqlDbType.VarChar, 50);
+                sql_Rx_MBy.Value = (string)Session["User"];
+
+                //Added for Rx Document Attachment 
+                byte[] rxDoc = null;
+                if (FileUpRxDoc.PostedFile != null && FileUpRxDoc.PostedFile.FileName != "")
+                {
+                    rxDoc = new byte[FileUpRxDoc.PostedFile.ContentLength];
+                    HttpPostedFile Image = FileUpRxDoc.PostedFile;
+                    Image.InputStream.Read(rxDoc, 0, (int)FileUpRxDoc.PostedFile.ContentLength);
+                }
+
+                SqlParameter Rx_Doc = sqlCmd.Parameters.Add("@Rx_Doc", SqlDbType.Image);
+                if (rxDoc != null)
+                    Rx_Doc.Value = rxDoc;
+                else
+                    Rx_Doc.Value = Convert.DBNull;
+
+                SqlParameter sql_Rx_SysFlag = sqlCmd.Parameters.Add("@Rx_SysFlag", SqlDbType.VarChar, 50);
+                if (chkRx30Patient.Checked == true)
+                    sql_Rx_SysFlag.Value = "P";
+                else
+                    sql_Rx_SysFlag.Value = "R";
+
+
+                //Added for Rx Document Attachment
+
+                SqlParameter sql_RXID = sqlCmd.Parameters.Add("@RXID", SqlDbType.Int);
+                sql_RXID.Direction = ParameterDirection.Output;
+                sqlCon.Open();
+                sqlCmd.ExecuteNonQuery();
+                objUALog.LogUserActivity(conStr, userID, "Added New Prescription(Rx) Info. RxID = " + sql_RXID.Value.ToString(), "Patient_Rx, Rx_Drug_Info", int.Parse((string)hidPatID.Value));
+                FillgridPriscrition();
+                hidRXID.Value = sql_RXID.Value.ToString();
+                txtDocName.Enabled = false;
                 addPrescription.Show();
+                rbtnAdioPharmacy.Checked = true;
+                rbtnOtherPharmacy.Checked = false;
+                txt_P_Med.Text = "";
+                txt_P_Qty.Text = "";
+                txt_P_sig.Text = "";
+                txtRxComments.Text = "";
+                ddl_P_Refills.SelectedIndex = 0;
+                ddl_P_Status.SelectedIndex = 0;
+                txtFillDate.Text = DateTime.Now.ToShortDateString();
+                rbtnRegular.Checked = true;
+                //Session["DupRxRecord"] = txt_P_Med.Text;
+                //Session["DupPatRecord"] = hidPatID.Value;
+                //Session["DupRxFillDt"] = txtFillDate.Text;
+                lblPresStatus.Text = "";
+                lblPresStatus.Attributes.CssStyle[HtmlTextWriterStyle.Visibility] = "hidden";
+
+                //lblPresStatus.Visible = false;
+
             }
-            else if (DocID == 0)
+            catch (Exception ex)
             {
-                lblPresStatus.Attributes.CssStyle[HtmlTextWriterStyle.Visibility] = "visible";
-
-                //lblPresStatus.Visible = true;
-                lblPresStatus.Text = "Error: Invalid Doctor Name..!";
-                addPrescription.Show();
-
+                objNLog.Error("Error : " + ex.Message);
             }
-            objNLog.Info("Save Prescription Continue Click Event Completed...");
+            finally
+            {
+                sqlCon.Close();
+            }
+        }
+        else if (DrugID == 0)
+        {
+            //lblPresStatus.Visible = true;
+            lblPresStatus.Attributes.CssStyle[HtmlTextWriterStyle.Visibility] = "visible";
+
+            lblMsg.ForeColor = System.Drawing.Color.Red;
+            lblPresStatus.Text = "Error: Invalid Drug Name..!";
+            addPrescription.Show();
+        }
+        else if (DocID == 0)
+        {
+            lblPresStatus.Attributes.CssStyle[HtmlTextWriterStyle.Visibility] = "visible";
+
+            //lblPresStatus.Visible = true;
+            lblPresStatus.Text = "Error: Invalid Doctor Name..!";
+            addPrescription.Show();
+
+        }
+        objNLog.Info("Save Prescription Continue Click Event Completed...");
         //}
-}
+    }
     private Boolean CheckIfDuplicateRequest()
     {
         bool flag = false;
@@ -2059,18 +2090,18 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
     }
     public bool display_link1(string type, string status)
     {
-           //check username here and return a bool
+        //check username here and return a bool
         if ((type == "Sample" || type == "PAP") && status != "Hold" && status != "Dispatched" && status != "Denied" && status != "Discontinued")
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-         
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
     }
-    
+
     #endregion
 
 
@@ -2176,7 +2207,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
     }
     protected void gridPatMedicalInfo_DataBound(object sender, GridViewRowEventArgs e)
     {
-      
+
         try
         {
             if (e.Row.RowType == DataControlRowType.DataRow)
@@ -2218,7 +2249,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
             objNLog.Error("Error : " + ex.Message);
         }
     }
-    
+
     #endregion
 
 
@@ -2229,20 +2260,20 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
         try
         {
             lblPatAllergies1.Text = "";
-                objPat_Pat_Det = new PatientPersonalDetails();
-                objPat_Pat_Det.Pat_ID = patID;
-                DataTable dtPatAllergies = objPat_Info.get_PatientAllergies(objPat_Pat_Det);
-                if (dtPatAllergies.Rows.Count > 0)
-                { 
-                    for(int i=0;i<dtPatAllergies.Rows.Count;i++)
-                    {
-                    if(lblPatAllergies1.Text=="")
+            objPat_Pat_Det = new PatientPersonalDetails();
+            objPat_Pat_Det.Pat_ID = patID;
+            DataTable dtPatAllergies = objPat_Info.get_PatientAllergies(objPat_Pat_Det);
+            if (dtPatAllergies.Rows.Count > 0)
+            {
+                for (int i = 0; i < dtPatAllergies.Rows.Count; i++)
+                {
+                    if (lblPatAllergies1.Text == "")
                         lblPatAllergies1.Text = dtPatAllergies.Rows[i]["Pat_Allergic_To"].ToString();
                     else
                         lblPatAllergies1.Text = lblPatAllergies1.Text + ", " + dtPatAllergies.Rows[i]["Pat_Allergic_To"].ToString();
-                    }
                 }
-             
+            }
+
         }
         catch (Exception ex)
         {
@@ -2294,7 +2325,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
             Label lblPA_ID = new Label();
             lblPA_ID = (Label)(gridPatAllergies.Rows[e.RowIndex].FindControl("lblPA_ID"));
 
-            objPat_Info.update_patAllergy(userID,txtATO.Text, txtADesc.Text, lblPA_ID.Text,int.Parse((string)hidPatID.Value));
+            objPat_Info.update_patAllergy(userID, txtATO.Text, txtADesc.Text, lblPA_ID.Text, int.Parse((string)hidPatID.Value));
             gridPatAllergies.EditIndex = -1;
             FillgridPatAllergies();
         }
@@ -2333,7 +2364,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
             string userID = (string)Session["User"];
             if (e.CommandName == "Delete")
             {
-                objPat_Info.delete_patAllergy(userID,e.CommandArgument.ToString(),int.Parse((string)hidPatID.Value));
+                objPat_Info.delete_patAllergy(userID, e.CommandArgument.ToString(), int.Parse((string)hidPatID.Value));
                 FillgridPatAllergies();
             }
         }
@@ -2364,7 +2395,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
             pAllergyDetails.PatID = Int32.Parse(hidPatID.Value.ToString());
             pAllergyDetails.AllergicTo = txtAllergyTo.Text;
             pAllergyDetails.AllergyDescription = txtAllergyDesc.Text;
-            objPat_Info.Set_Pat_Allergies(userID,pAllergyDetails);
+            objPat_Info.Set_Pat_Allergies(userID, pAllergyDetails);
             FillgridPatAllergies();
 
         }
@@ -2385,7 +2416,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
         objNLog.Info("Function Started...");
         try
         {
-           
+
             if (hidPatID.Value.ToString() != "")
             {
                 objPat_Pat_Det = new PatientPersonalDetails();
@@ -2440,9 +2471,9 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
             {
                 objPat_Info.Set_Pat_Insurance(userID, objPat_Ins_Det);
                 FillgridPatInsurance();
-                
+
             }
-            
+
         }
         catch (Exception ex)
         {
@@ -2494,7 +2525,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
             objPat_Ins_Det.InsPhone = ((TextBox)gridPatInsurance.Rows[e.RowIndex].FindControl("txtpatPhNo")).Text;
             objPat_Ins_Det.InsuredRelation = ((TextBox)gridPatInsurance.Rows[e.RowIndex].FindControl("txtrelINSD")).Text;
             string userID = (string)Session["User"];
-            objPat_Info.Update_Pat_Insurance(userID, objPat_Ins_Det,int.Parse((string)hidPatID.Value));
+            objPat_Info.Update_Pat_Insurance(userID, objPat_Ins_Det, int.Parse((string)hidPatID.Value));
             gridPatInsurance.EditIndex = -1;
             FillgridPatInsurance();
         }
@@ -2529,10 +2560,10 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
     }
 
     #endregion
-    
-    
+
+
     #region Patient Notes & Comments
-    
+
     protected void FillgridNotes()
     {
         objNLog.Info("Function Started...");
@@ -2641,7 +2672,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
         try
         {
             objPat_Info.Set_patNote(int.Parse(hidPatID.Value.ToString()), txtNoteDesc.Text, Session["User"].ToString());
-        
+
             //sqlCmd = new SqlCommand(sqlQuery, sqlCon);
             //sqlCon.Open();
             //sqlCmd.ExecuteNonQuery();
@@ -2669,8 +2700,8 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
     }
 
     #endregion
-    
-    
+
+
     #region Patient Call Logs & Med Issues
 
     protected void FillgridPatCallLog()
@@ -2779,17 +2810,17 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
     }
     protected void btnSaveCallLog_Click(object sender, EventArgs e)
     {
-        SqlConnection sqlCon = new SqlConnection(conStr); 
+        SqlConnection sqlCon = new SqlConnection(conStr);
         objNLog.Info("Save Call Log Click Event Started...");
         try
         {
             string userID = (string)Session["User"];
             string callIntiator = "", CSR = userID, issueFlag = "N", issueFor = "";
-            
+
             if (rbtnCSR.Checked)
                 callIntiator = "CSR";
-            
-            if(rbtnPatient.Checked)
+
+            if (rbtnPatient.Checked)
                 callIntiator = txtPatientName1.Text;
 
             if (rbtnAdmin.Checked)
@@ -2819,7 +2850,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
             if (rbtnMedicalIssueA.Checked)
             {
                 issueFlag = "A";
-                issueFor = "Administrator"; 
+                issueFor = "Administrator";
             }
 
             if (rbtnMedicalIssuePA.Checked)
@@ -2852,7 +2883,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
             spPatID.Value = int.Parse(hidPatID.Value.ToString());
             sqlCmd.Parameters.Add(spPatID);
 
-            SqlParameter spCall_Initiator = new SqlParameter("@Call_Initiator", SqlDbType.VarChar,50);
+            SqlParameter spCall_Initiator = new SqlParameter("@Call_Initiator", SqlDbType.VarChar, 50);
             spCall_Initiator.Value = callIntiator;
             sqlCmd.Parameters.Add(spCall_Initiator);
 
@@ -2868,20 +2899,20 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
             spCall_Desc.Value = txtCallDesc.Text;
             sqlCmd.Parameters.Add(spCall_Desc);
 
-            SqlParameter spIssueFlag = new SqlParameter("@IssueFlag", SqlDbType.Char,1);
+            SqlParameter spIssueFlag = new SqlParameter("@IssueFlag", SqlDbType.Char, 1);
             spIssueFlag.Value = issueFlag;
             sqlCmd.Parameters.Add(spIssueFlag);
 
-            SqlParameter spIssueFor = new SqlParameter("@IssueFor", SqlDbType.VarChar,50);
+            SqlParameter spIssueFor = new SqlParameter("@IssueFor", SqlDbType.VarChar, 50);
             spIssueFor.Value = issueFor;
             sqlCmd.Parameters.Add(spIssueFor);
 
-            
+
 
             sqlCon.Open();
             sqlCmd.ExecuteNonQuery();
 
-            objUALog.LogUserActivity(conStr, userID, "Added New Patient Call Log Info. with PatID = " + hidPatID.Value.ToString(), "Call_Log",Int32.Parse((string)hidPatID.Value));
+            objUALog.LogUserActivity(conStr, userID, "Added New Patient Call Log Info. with PatID = " + hidPatID.Value.ToString(), "Call_Log", Int32.Parse((string)hidPatID.Value));
             FillgridPatCallLog();
             ClearCallLogPopup();
 
@@ -2953,7 +2984,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
                 lblCallLogReceiver.Text = "Doctor Name: ";
 
                 txtCallLogDoctor.Visible = true;
-                txtCallLogDoctor.Text =lblDoctor1.Text;
+                txtCallLogDoctor.Text = lblDoctor1.Text;
                 txtCallLogPharmacist.Visible = false;
                 txtCallLogOther.Visible = false;
             }
@@ -2981,10 +3012,10 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
                 txtCallLogPharmacist.Visible = false;
             }
 
-           
-            
 
-           
+
+
+
             AddCallLog.Show();
         }
         catch (Exception ex)
@@ -3010,14 +3041,14 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
         txtCallLogOther.Text = "";
 
         txtCallLogPharmacist.Visible = false;
-        txtCallLogDoctor.Visible = false;        
+        txtCallLogDoctor.Visible = false;
         txtCallLogOther.Visible = false;
     }
     #endregion
-    
-    
+
+
     #region Patient Payments
-     
+
     protected void FillgridPatPayments()
     {
         objNLog.Info("Function Started...");
@@ -3033,7 +3064,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
         }
         catch (Exception ex)
         {
-            objNLog.Error("Error : " + ex.Message );
+            objNLog.Error("Error : " + ex.Message);
         }
         objNLog.Info("Function Completed...");
     }
@@ -3120,7 +3151,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
             Payment_Mode = "Credit Card";
         string userID = (string)Session["User"];
         SqlConnection sqlCon = new SqlConnection(conStr);
-        SqlCommand sqlCmd=new SqlCommand();
+        SqlCommand sqlCmd = new SqlCommand();
         //string sqlQuery = "Insert INTO Patient_Payments(Pat_ID,Payment_Mode,Check_OR_CC_Number,CCPay_Confirmation,"
         //                                                + "Payment_Date,Payment_Amount,Payment_Notes) VALUES ('"
         //                                                + hidPatID.Value.ToString() 
@@ -3144,7 +3175,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
             SqlParameter sql_Pat_ID = sqlCmd.Parameters.Add("@Pat_ID", SqlDbType.Int);
             sql_Pat_ID.Value = int.Parse(hidPatID.Value);
 
-            SqlParameter sql_Payment_Mode = sqlCmd.Parameters.Add("@Payment_Mode", SqlDbType.VarChar,20);
+            SqlParameter sql_Payment_Mode = sqlCmd.Parameters.Add("@Payment_Mode", SqlDbType.VarChar, 20);
             sql_Payment_Mode.Value = Payment_Mode;
 
             SqlParameter sql_Check_OR_CC_Number = sqlCmd.Parameters.Add("@Check_OR_CC_Number", SqlDbType.VarChar, 50);
@@ -3159,19 +3190,19 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
             SqlParameter sql_Payment_Amount = sqlCmd.Parameters.Add("@Payment_Amount", SqlDbType.Money);
             sql_Payment_Amount.Value = txtPayAmount.Text;
 
-            SqlParameter sql_Payment_Notes = sqlCmd.Parameters.Add("@Payment_Notes", SqlDbType.VarChar,255);
+            SqlParameter sql_Payment_Notes = sqlCmd.Parameters.Add("@Payment_Notes", SqlDbType.VarChar, 255);
             sql_Payment_Notes.Value = txtPaymentNote.Text;
 
             SqlParameter sql_Payment_SysFlag = sqlCmd.Parameters.Add("@Payment_SysFlag", SqlDbType.VarChar, 50);
-            if(chkRx30Patient.Checked==true)
-                 sql_Payment_SysFlag.Value ="P";
+            if (chkRx30Patient.Checked == true)
+                sql_Payment_SysFlag.Value = "P";
             else
                 sql_Payment_SysFlag.Value = "R";
 
             sqlCon.Open();
             sqlCmd.ExecuteNonQuery();
             objUALog.LogUserActivity(conStr, userID, "Added New Payment Info for the Patient with PatID=" + (string)hidPatID.Value, "Patient_Payments", Int32.Parse((string)hidPatID.Value));
-           
+
             sqlCon.Close();
             FillgridPatPayments();
 
@@ -3195,14 +3226,14 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
         }
     }
     protected void gridPayments_RowDataBound(object sender, GridViewRowEventArgs e)
-   {
-       try
-       {
-           if (e.Row.RowType == DataControlRowType.DataRow)
-           {
+    {
+        try
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
 
-               if ((DataBinder.Eval(e.Row.DataItem, "Payment_SysFlag")).ToString() == "P")
-               {
+                if ((DataBinder.Eval(e.Row.DataItem, "Payment_SysFlag")).ToString() == "P")
+                {
                     if ((string)Session["Role"] == "A" || (string)Session["Role"] == "T")
                     {
                         e.Row.Cells[0].FindControl("lnkEditPayments").Visible = true;
@@ -3211,489 +3242,489 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
                     {
                         e.Row.Cells[0].FindControl("lnkEditPayments").Visible = false;
                     }
-                   e.Row.ForeColor = System.Drawing.ColorTranslator.FromHtml("#8D38C9");
-               }
-               
-                
-           }
-       }
-       catch (Exception ex)
-       {
-           objNLog.Error("Error : " + ex.Message);
-       }
-   }
+                    e.Row.ForeColor = System.Drawing.ColorTranslator.FromHtml("#8D38C9");
+                }
+
+
+            }
+        }
+        catch (Exception ex)
+        {
+            objNLog.Error("Error : " + ex.Message);
+        }
+    }
     #endregion
 
 
     #region Patient ShippLog
-    
-   protected void FillShipLog()
-   {
-       objNLog.Info("Function Started...");
-       try
-       {
-           if (hidPatID.Value.ToString() != "")
-           {
-               //objPat_Pat_Det = new PatientPersonalDetails();
-              // objPat_Pat_Det.Pat_ID = int.Parse(hidPatID.Value.ToString());
-               gridShipLog.DataSource = objPat_Info.get_ShipLog(hidPatID.Value.ToString());
-               gridShipLog.DataBind();
-           }
-       }
-       catch (Exception ex)
-       {
-           objNLog.Error("Error : " + ex.Message);
-       }
-       objNLog.Info("Function Completed...");
-   }
- 
-   protected void gridShipLog_PageIndexChanging(object sender, GridViewPageEventArgs e)
-   {
-       try
-       {
-           gridShipLog.PageIndex = e.NewPageIndex;
-           FillShipLog();
-       }
-       catch (Exception ex)
-       {
-           objNLog.Error("Error : " + ex.Message);
-       }
-   }
-   
-   
- 
-  
-   #endregion
+
+    protected void FillShipLog()
+    {
+        objNLog.Info("Function Started...");
+        try
+        {
+            if (hidPatID.Value.ToString() != "")
+            {
+                //objPat_Pat_Det = new PatientPersonalDetails();
+                // objPat_Pat_Det.Pat_ID = int.Parse(hidPatID.Value.ToString());
+                gridShipLog.DataSource = objPat_Info.get_ShipLog(hidPatID.Value.ToString());
+                gridShipLog.DataBind();
+            }
+        }
+        catch (Exception ex)
+        {
+            objNLog.Error("Error : " + ex.Message);
+        }
+        objNLog.Info("Function Completed...");
+    }
+
+    protected void gridShipLog_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        try
+        {
+            gridShipLog.PageIndex = e.NewPageIndex;
+            FillShipLog();
+        }
+        catch (Exception ex)
+        {
+            objNLog.Error("Error : " + ex.Message);
+        }
+    }
+
+
+
+
+    #endregion
 
 
     #region Patient Documents
 
-   protected int FillgridDocument()
-   {
-       int flag=0;
-       objNLog.Info("Function Started...");
-       try
-       {
-           if (hidPatID.Value.ToString() != "")
-           {
+    protected int FillgridDocument()
+    {
+        int flag = 0;
+        objNLog.Info("Function Started...");
+        try
+        {
+            if (hidPatID.Value.ToString() != "")
+            {
 
-               objPat_Pat_Det = new PatientPersonalDetails();
-               objPat_Pat_Det.Pat_ID = int.Parse(hidPatID.Value.ToString());
-               gridDocuments.DataSource = objPat_Info.get_PatientDocuments(objPat_Pat_Det);
-               gridDocuments.DataBind();
-               flag=1;
-           }
-       }
-       catch (Exception ex)
-       {
-           objNLog.Error("Error : " + ex.Message);
-       }
-       objNLog.Info("Function Completed...");
-       return flag;
-   }
+                objPat_Pat_Det = new PatientPersonalDetails();
+                objPat_Pat_Det.Pat_ID = int.Parse(hidPatID.Value.ToString());
+                gridDocuments.DataSource = objPat_Info.get_PatientDocuments(objPat_Pat_Det);
+                gridDocuments.DataBind();
+                flag = 1;
+            }
+        }
+        catch (Exception ex)
+        {
+            objNLog.Error("Error : " + ex.Message);
+        }
+        objNLog.Info("Function Completed...");
+        return flag;
+    }
 
-   protected void gridDocuments_PageIndexChanging(object sender, GridViewPageEventArgs e)
-   {
-       try
-       {
-           gridDocuments.PageIndex = e.NewPageIndex;
-           FillgridDocument();
-       }
-       catch (Exception ex)
-       {
-           objNLog.Error("Error : " + ex.Message);
-       }
-   }
-   protected void gridDocuments_RowDeleting(object sender, GridViewDeleteEventArgs e)
-   {
-       try
-       {
-           FillgridDocument();
-       }
-       catch (Exception ex)
-       {
-           objNLog.Error("Error : " + ex.Message);
-       }
-   }
-   protected void gridDocuments_RowCommand(object sender, GridViewCommandEventArgs e)
-   {
-       try
-       {
-           if (e.CommandName == "Delete")
-           {
-               objPat_Info.delete_patDocument(e.CommandArgument.ToString());
-               FillgridDocument();
-           }
-       }
-       catch (Exception ex)
-       {
-           objNLog.Error("Error : " + ex.Message);
-       }
-   }
+    protected void gridDocuments_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        try
+        {
+            gridDocuments.PageIndex = e.NewPageIndex;
+            FillgridDocument();
+        }
+        catch (Exception ex)
+        {
+            objNLog.Error("Error : " + ex.Message);
+        }
+    }
+    protected void gridDocuments_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        try
+        {
+            FillgridDocument();
+        }
+        catch (Exception ex)
+        {
+            objNLog.Error("Error : " + ex.Message);
+        }
+    }
+    protected void gridDocuments_RowCommand(object sender, GridViewCommandEventArgs e)
+    {
+        try
+        {
+            if (e.CommandName == "Delete")
+            {
+                objPat_Info.delete_patDocument(e.CommandArgument.ToString());
+                FillgridDocument();
+            }
+        }
+        catch (Exception ex)
+        {
+            objNLog.Error("Error : " + ex.Message);
+        }
+    }
 
-   protected void btnSaveDoc_Click(object sender, ImageClickEventArgs e)
-   {
-       objNLog.Info("Save Document Click Event Started...");
-       try
-       {
-           //SqlConnection sqlCon = new SqlConnection(conStr);
-           //SqlCommand sqlCmd;
+    protected void btnSaveDoc_Click(object sender, ImageClickEventArgs e)
+    {
+        objNLog.Info("Save Document Click Event Started...");
+        try
+        {
+            //SqlConnection sqlCon = new SqlConnection(conStr);
+            //SqlCommand sqlCmd;
 
-           if (fuDocument.HasFile)
-           {
-               string filename = System.IO.Path.GetFileName(fuDocument.FileName);
-               //fuDocument.SaveAs("C:\temp" + filename);
-               //string sqlQuery = "Insert INTO Pat_Documents(Pat_Id,Doc_Name,Doc_Desc,FileName) VALUES ('" + hidPatID.Value.ToString() + "','" + txtDocuName.Text + "','" + txtDocDesc.Text + "','" + filename + "') Select @@identity";
+            if (fuDocument.HasFile)
+            {
+                string filename = System.IO.Path.GetFileName(fuDocument.FileName);
+                //fuDocument.SaveAs("C:\temp" + filename);
+                //string sqlQuery = "Insert INTO Pat_Documents(Pat_Id,Doc_Name,Doc_Desc,FileName) VALUES ('" + hidPatID.Value.ToString() + "','" + txtDocuName.Text + "','" + txtDocDesc.Text + "','" + filename + "') Select @@identity";
 
-               //sqlCmd = new SqlCommand(sqlQuery, sqlCon);
-               //sqlCon.Open();
-               string fileid = "";
-               //fileid = sqlCmd.ExecuteScalar().ToString();
-               //sqlCmd.ExecuteNonQuery();
-               fileid= objPat_Info.Set_Patient_Documents(int.Parse(hidPatID.Value.ToString()), txtDocuName.Text, txtDocDesc.Text, filename);
-               string fillpath = Server.MapPath("Documents/" + fileid + "_" + filename);
-               fuDocument.SaveAs(fillpath);
-               //sqlCon.Close();
-               FillgridDocument();
-           }
+                //sqlCmd = new SqlCommand(sqlQuery, sqlCon);
+                //sqlCon.Open();
+                string fileid = "";
+                //fileid = sqlCmd.ExecuteScalar().ToString();
+                //sqlCmd.ExecuteNonQuery();
+                fileid = objPat_Info.Set_Patient_Documents(int.Parse(hidPatID.Value.ToString()), txtDocuName.Text, txtDocDesc.Text, filename);
+                string fillpath = Server.MapPath("Documents/" + fileid + "_" + filename);
+                fuDocument.SaveAs(fillpath);
+                //sqlCon.Close();
+                FillgridDocument();
+            }
 
-       }
-       catch (Exception ex)
-       {
-           objNLog.Error("Error : " + ex.Message);
-       }
-       objNLog.Info("Save Document Click Event Completed...");
-   }
+        }
+        catch (Exception ex)
+        {
+            objNLog.Error("Error : " + ex.Message);
+        }
+        objNLog.Info("Save Document Click Event Completed...");
+    }
 
-   #endregion
+    #endregion
 
-    
+
     #region Patient Billing
-       protected void imgBtnSaveBilling_Click(object sender, ImageClickEventArgs e)
-       {
-           objNLog.Info("Function Started...");
-           try
-           {
-               string userID = (string)Session["User"];
+    protected void imgBtnSaveBilling_Click(object sender, ImageClickEventArgs e)
+    {
+        objNLog.Info("Function Started...");
+        try
+        {
+            string userID = (string)Session["User"];
 
-               PatientBilling objPatBill = new PatientBilling();
-               PatientInfoDAL objPatInfo = new PatientInfoDAL();
+            PatientBilling objPatBill = new PatientBilling();
+            PatientInfoDAL objPatInfo = new PatientInfoDAL();
 
-               objPatBill.PatID = int.Parse(hidPatID.Value);
+            objPatBill.PatID = int.Parse(hidPatID.Value);
 
-               objPatBill.TransactionDate = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss");
-                 
-               if(rbtnPAPFilling.Checked==true)
-                    objPatBill.TransactionType= 'P';
-               else
-                   objPatBill.TransactionType='S';
+            objPatBill.TransactionDate = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss");
 
-               if(chkTimeBilling.Checked==true)
-                    objPatBill.TransactionMode='Y';
-               else
-                   objPatBill.TransactionMode = 'N';
+            if (rbtnPAPFilling.Checked == true)
+                objPatBill.TransactionType = 'P';
+            else
+                objPatBill.TransactionType = 'S';
 
-               objPatBill.TransactionAmount=txtTransAmt.Text;
+            if (chkTimeBilling.Checked == true)
+                objPatBill.TransactionMode = 'Y';
+            else
+                objPatBill.TransactionMode = 'N';
 
-               objPatBill.TransactionDetails=txtTransDetails.Text;
+            objPatBill.TransactionAmount = txtTransAmt.Text;
 
-               objPatBill.User = userID;
+            objPatBill.TransactionDetails = txtTransDetails.Text;
 
-               if (chkRx30Patient.Checked)
-                   objPatBill.TransSysFlag = "P";
-               else
-                   objPatBill.TransSysFlag = "R";
+            objPatBill.User = userID;
 
-               objPatInfo.SetPatientBillingInfo(objPatBill);
-               
-               FillPatientBillingGrid();
+            if (chkRx30Patient.Checked)
+                objPatBill.TransSysFlag = "P";
+            else
+                objPatBill.TransSysFlag = "R";
 
-               ClearBillingPanel();
-          
-           }
-           catch (Exception ex)
-           {
-               objNLog.Error("Error : " + ex.Message);
-           }
-           objNLog.Info("Function completed...");
-       }
-       protected void btnSaveAdjBill_Click(object sender, ImageClickEventArgs e)
-       {
-           objNLog.Info("Function Started...");
-           try
-           {
-               string userID = (string)Session["User"];
+            objPatInfo.SetPatientBillingInfo(objPatBill);
 
-               PatientBilling objPatBill = new PatientBilling();
-               PatientInfoDAL objPatInfo = new PatientInfoDAL();
+            FillPatientBillingGrid();
 
-               objPatBill.PatID = int.Parse(hidPatID.Value);
+            ClearBillingPanel();
 
-               objPatBill.TransactionDate = lblTransAdjDate.Text;
+        }
+        catch (Exception ex)
+        {
+            objNLog.Error("Error : " + ex.Message);
+        }
+        objNLog.Info("Function completed...");
+    }
+    protected void btnSaveAdjBill_Click(object sender, ImageClickEventArgs e)
+    {
+        objNLog.Info("Function Started...");
+        try
+        {
+            string userID = (string)Session["User"];
 
-               if (rbtnCredit.Checked == true)
-                   objPatBill.TransactionType = 'C';
-               else
-                   objPatBill.TransactionType = 'D';
+            PatientBilling objPatBill = new PatientBilling();
+            PatientInfoDAL objPatInfo = new PatientInfoDAL();
 
-               objPatBill.TransactionFlag='A';
+            objPatBill.PatID = int.Parse(hidPatID.Value);
 
-               objPatBill.TransactionAmount = txtAdjBillAmt.Text;
+            objPatBill.TransactionDate = lblTransAdjDate.Text;
 
-               objPatBill.TransactionDetails = txtAdjBillDetails.Text;
+            if (rbtnCredit.Checked == true)
+                objPatBill.TransactionType = 'C';
+            else
+                objPatBill.TransactionType = 'D';
 
-               objPatBill.User = userID;
+            objPatBill.TransactionFlag = 'A';
 
-               if (chkRx30Patient.Checked)
-                   objPatBill.TransSysFlag = "P";
-               else
-                   objPatBill.TransSysFlag = "R";
+            objPatBill.TransactionAmount = txtAdjBillAmt.Text;
 
-               objPatInfo.SetPatientAdjustBillingInfo(objPatBill);
+            objPatBill.TransactionDetails = txtAdjBillDetails.Text;
 
-               FillPatientBillingGrid();
+            objPatBill.User = userID;
 
-               ClearBillingAdjustmentPanel();
+            if (chkRx30Patient.Checked)
+                objPatBill.TransSysFlag = "P";
+            else
+                objPatBill.TransSysFlag = "R";
 
-           }
-           catch (Exception ex)
-           {
-               objNLog.Error("Error : " + ex.Message);
-           }
-           objNLog.Info("Function completed...");
-       }
-       public void FillPatientBillingGrid()
-       {
-           objNLog.Info("Function Started...");
-           try
-           {
-               PatientInfoDAL objPatInfo = new PatientInfoDAL();
-               grdBilling.DataSource = objPatInfo.GetPatientBillingInfo(int.Parse(hidPatID.Value.ToString()));
-               grdBilling.DataBind();
-               
-           }
-           catch (Exception ex)
-           {
-               objNLog.Error("Error : " + ex.Message);
-           }
-           objNLog.Info("Function completed...");
-       }
-       public void ClearBillingPanel()
-       { 
-         txtTransAmt.Text= "";
-         txtTransDetails.Text ="";
-         chkTimeBilling.Checked=false;
-         rbtnPAPFilling.Checked = true;
-         rbtnShippingCharges.Checked = false;
-       }
-       public void ClearBillingAdjustmentPanel()
-       {
-           txtAdjBillAmt.Text = "";
-           txtAdjBillDetails.Text = "";
-           rbtnCredit.Checked = true;
-           rbtnDebit.Checked = false;
-       }
-       protected void grdBilling_RowDataBound(object sender, GridViewRowEventArgs e)
-       {
-           try
-           {
-               if (e.Row.RowType == DataControlRowType.DataRow)
-               {
-                   CheckBox chkFirst = (CheckBox)e.Row.Cells[2].FindControl("chkFirstTrans");
-                   if ((DataBinder.Eval(e.Row.DataItem, "Trans_Mode")).ToString() == "Y")
-                   {
-                       chkFirst.Checked = true;
-                   }
-                   else
-                   {
-                       chkFirst.Checked = false;
-                   }
+            objPatInfo.SetPatientAdjustBillingInfo(objPatBill);
 
-                   if ((DataBinder.Eval(e.Row.DataItem, "Trans_flag")).ToString() == "A") 
-                   {
-                       e.Row.ForeColor = System.Drawing.ColorTranslator.FromHtml("#C11B17");
-                       e.Row.ToolTip = "Adjustment";
-                       chkFirst.Visible = false;
-                   }
+            FillPatientBillingGrid();
 
-                   if ((DataBinder.Eval(e.Row.DataItem, "Trans_SysFlag")).ToString() == "P")
-                   {
-                       if ((DataBinder.Eval(e.Row.DataItem, "Trans_flag")).ToString() == "A")
-                           e.Row.ForeColor = System.Drawing.ColorTranslator.FromHtml("#C11B17");
-                       else
-                            e.Row.ForeColor = System.Drawing.ColorTranslator.FromHtml("#8D38C9");
-                   }
+            ClearBillingAdjustmentPanel();
 
-                    
-               }
-           }
-           catch (Exception ex)
-           {
-               objNLog.Error("Error : " + ex.Message);
-           }
-       }
-       protected void grdBilling_PageIndexChanging(object sender, GridViewPageEventArgs e)
-       {
-           grdBilling.PageIndex = e.NewPageIndex;
-           FillPatientBillingGrid();
-       }
-       protected void gridBilling_RowDeleting(object sender, GridViewDeleteEventArgs e)
-       {
-           try
-           {
-               FillPatientBillingGrid();
-           }
-           catch (Exception ex)
-           {
-               objNLog.Error("Error : " + ex.Message);
-           }
-       }
-       protected void grdBilling_RowCommand(object sender, GridViewCommandEventArgs e)
-       {
-           try
-           {
-               if (e.CommandName == "Delete")
-               {
-                   objPat_Info.Delete_PatBilling(e.CommandArgument.ToString());
-                   FillPatientBillingGrid();
-               }
-           }
-           catch (Exception ex)
-           {
-               objNLog.Error("Error : " + ex.Message);
-           }
-       }
-       protected void gridPatInsurance_RowCommand(object sender, GridViewCommandEventArgs e)
-       {
-           try
-           {
-               if (e.CommandName == "EditInsurance")
-               {
-                   GridViewRow selectedRow = (GridViewRow)((LinkButton)e.CommandSource).NamingContainer;
-                   int intRowIndex = Convert.ToInt32(selectedRow.RowIndex);
+        }
+        catch (Exception ex)
+        {
+            objNLog.Error("Error : " + ex.Message);
+        }
+        objNLog.Info("Function completed...");
+    }
+    public void FillPatientBillingGrid()
+    {
+        objNLog.Info("Function Started...");
+        try
+        {
+            PatientInfoDAL objPatInfo = new PatientInfoDAL();
+            grdBilling.DataSource = objPatInfo.GetPatientBillingInfo(int.Parse(hidPatID.Value.ToString()));
+            grdBilling.DataBind();
 
-                   Label lblpatInsID = (Label)gridPatInsurance.Rows[intRowIndex].FindControl("lblpatInsID");
+        }
+        catch (Exception ex)
+        {
+            objNLog.Error("Error : " + ex.Message);
+        }
+        objNLog.Info("Function completed...");
+    }
+    public void ClearBillingPanel()
+    {
+        txtTransAmt.Text = "";
+        txtTransDetails.Text = "";
+        chkTimeBilling.Checked = false;
+        rbtnPAPFilling.Checked = true;
+        rbtnShippingCharges.Checked = false;
+    }
+    public void ClearBillingAdjustmentPanel()
+    {
+        txtAdjBillAmt.Text = "";
+        txtAdjBillDetails.Text = "";
+        rbtnCredit.Checked = true;
+        rbtnDebit.Checked = false;
+    }
+    protected void grdBilling_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        try
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                CheckBox chkFirst = (CheckBox)e.Row.Cells[2].FindControl("chkFirstTrans");
+                if ((DataBinder.Eval(e.Row.DataItem, "Trans_Mode")).ToString() == "Y")
+                {
+                    chkFirst.Checked = true;
+                }
+                else
+                {
+                    chkFirst.Checked = false;
+                }
 
-                   Label lblpatIns = (Label)gridPatInsurance.Rows[intRowIndex].FindControl("lblpatIns");
+                if ((DataBinder.Eval(e.Row.DataItem, "Trans_flag")).ToString() == "A")
+                {
+                    e.Row.ForeColor = System.Drawing.ColorTranslator.FromHtml("#C11B17");
+                    e.Row.ToolTip = "Adjustment";
+                    chkFirst.Visible = false;
+                }
 
-                   Label lblpatPolicyID = (Label)gridPatInsurance.Rows[intRowIndex].FindControl("lblpatPolicyID");
-
-                   Label lblpatBINNo = (Label)gridPatInsurance.Rows[intRowIndex].FindControl("lblpatBINNo");
-
-                   Label lblpatGRPNo = (Label)gridPatInsurance.Rows[intRowIndex].FindControl("lblpatGRPNo");
-
-                   Label lblpatPhNo = (Label)gridPatInsurance.Rows[intRowIndex].FindControl("lblpatPhNo");
-
-                   Label lblrelINSDRel = (Label)gridPatInsurance.Rows[intRowIndex].FindControl("lblINSDRel");
-
-                   Label lblINSDName = (Label)gridPatInsurance.Rows[intRowIndex].FindControl("lblINSDName");
-
-                   Label lblINSDDOB = (Label)gridPatInsurance.Rows[intRowIndex].FindControl("lblINSDDOB");
-
-                   Label lblINSDSSN = (Label)gridPatInsurance.Rows[intRowIndex].FindControl("lblINSDSSN");
-
-                   Label lblIsActive = (Label)gridPatInsurance.Rows[intRowIndex].FindControl("lblIsActive");
+                if ((DataBinder.Eval(e.Row.DataItem, "Trans_SysFlag")).ToString() == "P")
+                {
+                    if ((DataBinder.Eval(e.Row.DataItem, "Trans_flag")).ToString() == "A")
+                        e.Row.ForeColor = System.Drawing.ColorTranslator.FromHtml("#C11B17");
+                    else
+                        e.Row.ForeColor = System.Drawing.ColorTranslator.FromHtml("#8D38C9");
+                }
 
 
-                   hidPatInsID.Value = lblpatInsID.Text;
-                   txtEditInsName.Text = lblpatIns.Text;
-                   txtEditInsPhone.Text = lblpatPhNo.Text;
-                   txtEditInsPolicyID.Text =lblpatPolicyID.Text;
-                   txtEditInsGroupNo.Text =lblpatGRPNo.Text;
-                   txtEditInsBinNo.Text =lblpatBINNo.Text;
-                   txtEditInsdName.Text = lblINSDName.Text;
-                   txtEditInsDOB.Text = lblINSDDOB.Text;
-                   txtEditInsSSN.Text = lblINSDSSN.Text;
-                   txtEditInsRelation.Text = lblrelINSDRel.Text;
+            }
+        }
+        catch (Exception ex)
+        {
+            objNLog.Error("Error : " + ex.Message);
+        }
+    }
+    protected void grdBilling_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        grdBilling.PageIndex = e.NewPageIndex;
+        FillPatientBillingGrid();
+    }
+    protected void gridBilling_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        try
+        {
+            FillPatientBillingGrid();
+        }
+        catch (Exception ex)
+        {
+            objNLog.Error("Error : " + ex.Message);
+        }
+    }
+    protected void grdBilling_RowCommand(object sender, GridViewCommandEventArgs e)
+    {
+        try
+        {
+            if (e.CommandName == "Delete")
+            {
+                objPat_Info.Delete_PatBilling(e.CommandArgument.ToString());
+                FillPatientBillingGrid();
+            }
+        }
+        catch (Exception ex)
+        {
+            objNLog.Error("Error : " + ex.Message);
+        }
+    }
+    protected void gridPatInsurance_RowCommand(object sender, GridViewCommandEventArgs e)
+    {
+        try
+        {
+            if (e.CommandName == "EditInsurance")
+            {
+                GridViewRow selectedRow = (GridViewRow)((LinkButton)e.CommandSource).NamingContainer;
+                int intRowIndex = Convert.ToInt32(selectedRow.RowIndex);
 
-                   if (objPat_Info.IsPrimaryInsurance(Int32.Parse(lblpatInsID.Text)) == 1)
-                   {
-                       chkEditIsPrimary.Checked = true;
-                   }
-                   else
-                   {
-                       chkEditIsPrimary.Checked = false;
-                   }
+                Label lblpatInsID = (Label)gridPatInsurance.Rows[intRowIndex].FindControl("lblpatInsID");
 
-                   if (lblIsActive.Text == "Y")
-                       rbtnEditInsActive.Checked = true;
-                   else
-                       rbtnEditInsInActive.Checked = true;
-     
-                   MPEEditInsurance.Show();
-               }
+                Label lblpatIns = (Label)gridPatInsurance.Rows[intRowIndex].FindControl("lblpatIns");
 
-           }
-           catch (Exception ex)
-           {
-               objNLog.Error("Error : " + ex.Message);
-           }
-       }
-       protected void btnEditInsurance_Click(object sender, ImageClickEventArgs e)
-       {
-           objNLog.Info("Save Insurance Click Event Started");
-           int InsuranceID = objPat_Info.Get_InsuranceID(txtEditInsName.Text.Trim());//Find Ins ID
-           char active = 'N';
+                Label lblpatPolicyID = (Label)gridPatInsurance.Rows[intRowIndex].FindControl("lblpatPolicyID");
 
-           if (rbtnEditInsActive.Checked)
-               active = 'Y';
+                Label lblpatBINNo = (Label)gridPatInsurance.Rows[intRowIndex].FindControl("lblpatBINNo");
 
-           try
-           {
-               objPat_Ins_Det.PI_ID = Int32.Parse(hidPatInsID.Value.ToString());
-               objPat_Ins_Det.Pat_ID = Int32.Parse(hidPatID.Value.ToString());
-               objPat_Ins_Det.InsuranceID = InsuranceID;
-               objPat_Ins_Det.PI_PolicyID = txtEditInsPolicyID.Text;
-               objPat_Ins_Det.PI_GroupNo = txtEditInsGroupNo.Text;
-               objPat_Ins_Det.PI_BINNo = txtEditInsBinNo.Text;
-               objPat_Ins_Det.InsuredName = txtEditInsdName.Text;
-               objPat_Ins_Det.InsuredDOB = txtEditInsDOB.Text;
-               objPat_Ins_Det.InsuredSSN =  txtEditInsSSN.Text;
-               objPat_Ins_Det.InsuredRelation =txtEditInsRelation.Text;
-               objPat_Ins_Det.IsActive = active;
-               objPat_Ins_Det.InsPhone =  txtEditInsPhone.Text;
+                Label lblpatGRPNo = (Label)gridPatInsurance.Rows[intRowIndex].FindControl("lblpatGRPNo");
 
-               if (chkEditIsPrimary.Checked == true)
-               {
-                   objPat_Ins_Det.IsPrimaryIns = 'Y';
-                   lblPrimIns1.Text = txtEditInsName.Text.Trim();
-               }
-               else
-                   objPat_Ins_Det.IsPrimaryIns = 'N';
+                Label lblpatPhNo = (Label)gridPatInsurance.Rows[intRowIndex].FindControl("lblpatPhNo");
 
-               string userID = (string)Session["User"];
+                Label lblrelINSDRel = (Label)gridPatInsurance.Rows[intRowIndex].FindControl("lblINSDRel");
 
-               if (InsuranceID == 0)
-               {
-                   string str = "alert('Invalid Insurance..!');";
-                   ScriptManager.RegisterStartupScript(btnSave, typeof(Page), "alert", str, true);
-               }
-               else
-               {
-                   objPat_Info.Update_Pat_Insurance(userID, objPat_Ins_Det,patID);
-                   FillgridPatInsurance();
+                Label lblINSDName = (Label)gridPatInsurance.Rows[intRowIndex].FindControl("lblINSDName");
 
-               }
+                Label lblINSDDOB = (Label)gridPatInsurance.Rows[intRowIndex].FindControl("lblINSDDOB");
 
-           }
-           catch (Exception ex)
-           {
-               objNLog.Error("Exception : " + ex.Message);
-           }
-           objNLog.Error("Function Terminated...");
-       }
-       protected void chkRx30Patient_CheckedChanged(Object sender, EventArgs e)
-   {
-       if (chkRx30Patient.Checked == true)
-       {
-           Session["Prodigy"] = "P";
-       }
-       else
-       {
-           Session["Prodigy"] = "R";
-       }
+                Label lblINSDSSN = (Label)gridPatInsurance.Rows[intRowIndex].FindControl("lblINSDSSN");
+
+                Label lblIsActive = (Label)gridPatInsurance.Rows[intRowIndex].FindControl("lblIsActive");
 
 
-   }
-   #endregion
+                hidPatInsID.Value = lblpatInsID.Text;
+                txtEditInsName.Text = lblpatIns.Text;
+                txtEditInsPhone.Text = lblpatPhNo.Text;
+                txtEditInsPolicyID.Text = lblpatPolicyID.Text;
+                txtEditInsGroupNo.Text = lblpatGRPNo.Text;
+                txtEditInsBinNo.Text = lblpatBINNo.Text;
+                txtEditInsdName.Text = lblINSDName.Text;
+                txtEditInsDOB.Text = lblINSDDOB.Text;
+                txtEditInsSSN.Text = lblINSDSSN.Text;
+                txtEditInsRelation.Text = lblrelINSDRel.Text;
+
+                if (objPat_Info.IsPrimaryInsurance(Int32.Parse(lblpatInsID.Text)) == 1)
+                {
+                    chkEditIsPrimary.Checked = true;
+                }
+                else
+                {
+                    chkEditIsPrimary.Checked = false;
+                }
+
+                if (lblIsActive.Text == "Y")
+                    rbtnEditInsActive.Checked = true;
+                else
+                    rbtnEditInsInActive.Checked = true;
+
+                MPEEditInsurance.Show();
+            }
+
+        }
+        catch (Exception ex)
+        {
+            objNLog.Error("Error : " + ex.Message);
+        }
+    }
+    protected void btnEditInsurance_Click(object sender, ImageClickEventArgs e)
+    {
+        objNLog.Info("Save Insurance Click Event Started");
+        int InsuranceID = objPat_Info.Get_InsuranceID(txtEditInsName.Text.Trim());//Find Ins ID
+        char active = 'N';
+
+        if (rbtnEditInsActive.Checked)
+            active = 'Y';
+
+        try
+        {
+            objPat_Ins_Det.PI_ID = Int32.Parse(hidPatInsID.Value.ToString());
+            objPat_Ins_Det.Pat_ID = Int32.Parse(hidPatID.Value.ToString());
+            objPat_Ins_Det.InsuranceID = InsuranceID;
+            objPat_Ins_Det.PI_PolicyID = txtEditInsPolicyID.Text;
+            objPat_Ins_Det.PI_GroupNo = txtEditInsGroupNo.Text;
+            objPat_Ins_Det.PI_BINNo = txtEditInsBinNo.Text;
+            objPat_Ins_Det.InsuredName = txtEditInsdName.Text;
+            objPat_Ins_Det.InsuredDOB = txtEditInsDOB.Text;
+            objPat_Ins_Det.InsuredSSN = txtEditInsSSN.Text;
+            objPat_Ins_Det.InsuredRelation = txtEditInsRelation.Text;
+            objPat_Ins_Det.IsActive = active;
+            objPat_Ins_Det.InsPhone = txtEditInsPhone.Text;
+
+            if (chkEditIsPrimary.Checked == true)
+            {
+                objPat_Ins_Det.IsPrimaryIns = 'Y';
+                lblPrimIns1.Text = txtEditInsName.Text.Trim();
+            }
+            else
+                objPat_Ins_Det.IsPrimaryIns = 'N';
+
+            string userID = (string)Session["User"];
+
+            if (InsuranceID == 0)
+            {
+                string str = "alert('Invalid Insurance..!');";
+                ScriptManager.RegisterStartupScript(btnSave, typeof(Page), "alert", str, true);
+            }
+            else
+            {
+                objPat_Info.Update_Pat_Insurance(userID, objPat_Ins_Det, patID);
+                FillgridPatInsurance();
+
+            }
+
+        }
+        catch (Exception ex)
+        {
+            objNLog.Error("Exception : " + ex.Message);
+        }
+        objNLog.Error("Function Terminated...");
+    }
+    protected void chkRx30Patient_CheckedChanged(Object sender, EventArgs e)
+    {
+        if (chkRx30Patient.Checked == true)
+        {
+            Session["Prodigy"] = "P";
+        }
+        else
+        {
+            Session["Prodigy"] = "R";
+        }
+
+
+    }
+    #endregion
 }
