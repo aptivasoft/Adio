@@ -202,20 +202,22 @@
             
             <asp:Panel ID="surveyDiv" runat="server">
                 
-                <div class="modal-dialog" style="width: 900px !important">
+                <div class="modal-dialog" style="width: 1000px !important;">
                     <div class="modal-content">
                           <div class="row">
                                 <div class="col-sm-12">
                                     <div class="surveyH clearfix">
                                     <a class="crossBtn glyphicon glyphicon-remove" onclick="closeSurveyDialog()">&nbsp;</a>
                                     <h3>SURVEY #33</h3>
-                                    <ul id="surveyUL">
+                                        <div style="max-height: 600px;overflow-x: hidden !important;overflow-y: scroll;">
+                                            <ul id="surveyUL">
                                         
-                                    </ul>
+                                            </ul>        
+                                        </div>
                                     <ul>
                                         <li id="fotterSectionOfSurvey">
                                             <div class="btnH">
-                                                <button type="button" class="btn btn-default">Save</button>
+                                                <button type="button" class="btn btn-default" onclick="saveSurvey()">Save</button>
                                                 <button type="button" class="btn btn-default" onclick="closeSurveyDialog()">Cancel</button>
                                             </div>
                                         </li>
@@ -1984,7 +1986,7 @@
    </asp:UpdateProgress>
  </div>
         <ul style="display: none">
-           <li id="questionTemplate">
+           <li id="questionTemplate" class="surveyQuestions">
                 <div class="col-sm-8">
                     <p class="questionText"></p>
                     <div class="listAns">
@@ -1999,11 +2001,11 @@
                 </div><!-- col-sm-4 -->
             </li>
             <li id="questionOptionLICheckBox">
-                <input type="checkbox">
+                <input type="checkbox" class="htmlControl">
                 <label class="questionOptionLabelCheckBox"></label>
             </li>
             <li id="questionOptionLIRadioButton">
-                <input type="radio" name="answerRadio">
+                <input type="radio" name="answerRadio" class="htmlControl">
                 <label class="questionOptionLabelRadio"></label>
             </li>
         </ul>
@@ -2011,6 +2013,29 @@
 </tr>
 </table>
      <script language="javascript" type="text/javascript">
+
+         function saveSurvey() {
+
+             var questioResponse = [];
+
+             $(".surveyQuestions").each(function(index, value) {
+
+                 var response = {};
+
+                 response.QuestionID = $(value).attr("questionID");
+                 response.selectedAnswerOption = [];
+                 $("input:checked", value).each(function() {
+                     response.selectedAnswerOption.push($(this).attr('answerID'));
+                 });
+                 response.Comment = $('.textAreaQuestion', value).val();
+
+                 questioResponse.push(response);
+             });
+
+             console.log("Question Response", questioResponse);
+         }
+
+
          var surveyQuestion;
          function LoadSurveyJsonObject(SurveyObject) {
              surveyQuestion = JSON.parse(SurveyObject);
@@ -2031,23 +2056,24 @@
          }
 
          var surveyQuestion = [
-            {
-                "Ques_Text": "Question Text",
-                "Ques_Type": "CB",
-                "AnswerOption": [],
-                "Ques_Comments": "ssdsddsdsdssdsdsd"
-            },
-            {
-                "Question": "Question Text",
-                "Question_Type": "Multi",
-                "AnswerOption": ["D", "E", "F"],
-                "Comment": ""
-            }
+             {
+                 "Ques_Text": "Question Text",
+                 "Ques_Type": "CB",
+                 "AnswerOption": [],
+                 "Ques_Comments": "ssdsddsdsdssdsdsd"
+             },
+             {
+                 "Question": "Question Text",
+                 "Question_Type": "Multi",
+                 "AnswerOption": ["D", "E", "F"],
+                 "Comment": ""
+             }
          ];
 
          function generationOfTemplate(modifiedQuestion) {
              $(modifiedQuestion).each(function (index, value) {
                  var newQuestion = $("#questionTemplate").clone();
+                 $(newQuestion).attr('questionID', value.QID);
                  $('.questionText', $(newQuestion)).html(value.Ques_Text);
                  $('.textAreaQuestion', $(newQuestion)).attr('placeholder', value.Ques_Comments);
                  $('.answerOptions', $(newQuestion)).empty();
@@ -2055,30 +2081,32 @@
                      $(value.AnswerOption).each(function (i, v) {
                          if (v !== null && v !== undefined) {
                              var newAnswerOption = $("#questionOptionLICheckBox").clone();
+                             $('.htmlControl', newAnswerOption).attr('answerID', i+1);
                              $('.questionOptionLabelCheckBox', $(newAnswerOption)).html(v);
                              $('.answerOptions', $(newQuestion)).append(newAnswerOption);
                          }
-                    });
+                     });
                  } else if (value.Ques_Type === "RB") {
                      $(value.AnswerOption).each(function (i, v) {
                          if (v !== null && v !== undefined) {
                              var newAnswerOption = $("#questionOptionLIRadioButton").clone();
+                             $('.htmlControl', newAnswerOption).attr('answerID', i+1);
                              $('.questionOptionLabelRadio', $(newAnswerOption)).html(v);
                              $('.answerOptions', $(newQuestion)).append(newAnswerOption);
                          }
                      });
                  }
-                $("#surveyUL").append(newQuestion);
+                 $("#surveyUL").append(newQuestion);
              });
          }
 
-             function openSurvey() {
-                 $(surveyQuestion).each(function () {
+         function openSurvey() {
+             $(surveyQuestion).each(function () {
              });
 
-            $("#fotterDiv").css("margin-top", ((100 * $(surveyQuestion).length) + 100));
-            $find("mpe").show();
-            return false;
+             $("#fotterDiv").css("margin-top", ((100 * $(surveyQuestion).length) + 100));
+             $find("mpe").show();
+             return false;
          };
 
          function closeSurveyDialog() {
