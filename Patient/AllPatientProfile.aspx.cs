@@ -38,32 +38,20 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
     PatientInsuranceDetails objPat_Ins_Det = new PatientInsuranceDetails();
     PatinetMedHistoryInfo objPat_Med_His_Info = new PatinetMedHistoryInfo();
 
-    private void ssss()
-    {
-        //Access the DB
-        //convert the DT to JSON object
-        //write the JSOn on Respons sterm.
-        //End the response.
-    }
-
     #region Events
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        //Check url if you have getquestion as request parameter
-        //if Call is for get question
-
-
         try
         {
-
-            string s = Request.Params.Get("__EVENTTARGET");
-            if (Request.Params.Get("__EVENTTARGET") == "btnSave") 
+            if (Request.Params.Get("__EVENTTARGET") == "btnSave")
             {
                 string surveyQuestionResponse = Request.Params.Get("__EVENTARGUMENT");
                 SavePatientFeedBack(surveyQuestionResponse);
             }
+
             ShowFeedBack();
+
             rbtnAdioPharmacy.Attributes.Add("onclick", "document.getElementById('" + txtPharmacy.ClientID + "').style.visibility='hidden'; document.getElementById('" + txtPharmacy.ClientID + "').value='';document.getElementById('" + rbtnPAP.ClientID + "').disabled=false;document.getElementById('" + rbtnSample.ClientID + "').disabled=false;document.getElementById('" + ddl_P_Status.ClientID + "').selectedIndex = 0;");
             rbtnOtherPharmacy.Attributes.Add("onclick", "document.getElementById('" + txtPharmacy.ClientID + "').style.visibility='visible';document.getElementById('" + txtPharmacy.ClientID + "').value='Other Pharmacy';document.getElementById('" + rbtnRegular.ClientID + "').checked=true;document.getElementById('" + rbtnPAP.ClientID + "').disabled=false;document.getElementById('" + rbtnSample.ClientID + "').disabled=false;frmchng('O','" + ddl_P_Status.ClientID + "'); ");
             //chkRx30Patient.Attributes.Add("onclick", "if(document.getElementById('" + chkRx30Patient.ClientID + "').checked){document.getElementById('" + chkRx30Patient.ClientID + "').nextSibling.innerHTML ='Prodigy';}else {document.getElementById('" + chkRx30Patient.ClientID + "').nextSibling.innerHTML='Rx30';}");
@@ -177,7 +165,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
                     ddlEditRxRefills.Items.Add(item);
                 }
             }
-            
+
             //
         }
         catch (Exception ex)

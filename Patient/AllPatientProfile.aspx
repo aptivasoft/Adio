@@ -217,7 +217,7 @@
                                         </div>
                                     <ul>
                                         <li id="fotterSectionOfSurvey">
-                                            <asp:Label ID="hdnfldVariable" runat="server" class="hdnfldJSONString" ></asp:Label>   
+                                            <asp:Label ID="hdnfldVariable" runat="server" class="hdnfldJSONString" style="display:none"></asp:Label>   
                                             <div class="btnH">
                                                 <button type="button" class="btn btn-default" onclick="saveSurvey()">Save</button>
                                                 <button type="button" class="btn btn-default" onclick="closeSurveyDialog()">Cancel</button>
