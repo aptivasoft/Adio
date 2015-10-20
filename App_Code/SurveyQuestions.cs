@@ -41,6 +41,26 @@ public class SurveyQuestions
         return DataTableToJsonWithJavaScriptSerializer(get_SurveyQuestionsDataTable());
     }
 
+    public static string get_Survey(string patId)
+    {
+        DataTable dtQuestionSurvey = new DataTable();
+        try
+        {
+            SqlConnection sqlCon = new SqlConnection(conStr);
+            SqlCommand cmd = new SqlCommand("sp_getPatSurveys", sqlCon);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Pat_ID", Convert.ToInt32(patId));
+            sqlCon.Open();
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            da.Fill(dtQuestionSurvey);
+            sqlCon.Close();
+        }
+        catch (Exception e)
+        {
+        }
+        return DataTableToJsonWithJavaScriptSerializer(dtQuestionSurvey);
+    }
+
     public static DataTable get_SurveyQuestionsDataTable()
     {
         DataTable dtQuestionSurvey = new DataTable();

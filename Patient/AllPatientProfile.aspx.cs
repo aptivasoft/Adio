@@ -44,6 +44,8 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
     {
         try
         {
+           
+
             if (Request.Params.Get("__EVENTTARGET") == "btnSave")
             {
                 string surveyQuestionResponse = Request.Params.Get("__EVENTARGUMENT");
@@ -185,8 +187,8 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
         FeedBackSurvey feedback = new FeedBackSurvey();
         feedback.User = (string)Session["User"];
         feedback.Comments = "";
-        feedback.FacId = Convert.ToInt32(patFacID);
-        feedback.patientId = Convert.ToInt32(patID);
+        feedback.FacId = Convert.ToInt32(Session["Fat_ID"]);
+        feedback.patientId = Convert.ToInt32(Session["Pat_ID"]);
         feedback.SurveyQuestionResponse = surveyQuestionResponse;
 
 
@@ -998,6 +1000,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
                     patID = (int)(dtPatientDetails.Rows[0]["Pat_ID"]);
                     Session["Pat_ID"] = patID;
                     patFacID = int.Parse(dtPatientDetails.Rows[0]["Facility_ID"].ToString());
+                    Session["Fat_ID"] = patFacID;
 
                     txtCallLogDoctor.Text = dtPatientDetails.Rows[0]["Pat_PDoc"].ToString();
                     lblDoctor1.Text = dtPatientDetails.Rows[0]["Pat_PDoc"].ToString();
