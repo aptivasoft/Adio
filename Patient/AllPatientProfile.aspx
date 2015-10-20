@@ -1988,10 +1988,20 @@
                                             </div>
 
                                             <asp:LinkButton ID="LinkButton1" runat="server" ForeColor="#000066"></asp:LinkButton>
+                                            <table style="width:100%" class="surveyTable" border="1">
+                                                 <thead class="rowHeader">
+                                                    
+                                                </thead>
+                                                <%--<tr >
+                                                    <td>X</td>
+                                                </tr>--%>
+                                                <tbody class="rowData"></tbody>
+                                            </table>
+                                               
+                                            
                                             <a href="javascript:void(0);" id="surveyLog" onclick="openSurvey()">Add Survey</a>
 
                                             <asp:Panel ID="surveyDiv" runat="server">
-
                                                 <div class="modal-dialog" style="width: 1000px !important;">
                                                     <div class="modal-content">
                                                         <div class="row">
@@ -2624,7 +2634,6 @@
 
 
         $("body").delegate("#surveyHeader", "click", function () {
-            alert(111);
             $.ajax({
                 url: "default.aspx?GetAllSurvey=30938", cache: false, success: function (result) {
                     LoadSurveyGrid(result);
@@ -2632,9 +2641,102 @@
             });
         });
 
+        var totalChoices = [];
         function LoadSurveyGrid(data) {
-            alert(1);
-            console.log('surveyGrid',data);
+            var patientSurveyObject = JSON.parse(data);
+            var modifiedSurveyList = JSON.parse(data);
+            $(modifiedQuestion).each(function (index, value) {
+                if (index === 0) {
+                    $(".rowHeader").append("<tr>");
+                    $(".rowHeader").append("<th>D</th>");
+                    $(".rowHeader").append("<th>#</th>");
+                    $(".rowHeader").append("<th>Data/Time</th>");
+                    $(".rowHeader").append("<th>Clinic</th>");
+                }
+                totalChoices.push(value.totalNumberOfChoices);
+                if (value.totalNumberOfChoices === 2) {
+                    $(".rowHeader").append("<th>" + (index + 1) + "</th>");
+                } else if (value.totalNumberOfChoices === 3) {
+                    $(".rowHeader").append("<th>" + (index + 1) + "a</th>");
+                    $(".rowHeader").append("<th>" + (index + 1) + "b</th>");
+                    $(".rowHeader").append("<th>" + (index + 1) + "c</th>");
+                } else if (value.totalNumberOfChoices === 4) {
+                    $(".rowHeader").append("<th>" + (index + 1) + "a</th>");
+                    $(".rowHeader").append("<th>" + (index + 1) + "b</th>");
+                    $(".rowHeader").append("<th>" + (index + 1) + "c</th>");
+                    $(".rowHeader").append("<th>" + (index + 1) + "d</th>");
+                }
+                if (index === modifiedQuestion.length - 1) {
+                    $(".rowHeader").append("</tr>");
+                }
+            });
+            console.log("totalChoices", totalChoices);
+
+            $(modifiedSurveyList).each(function (index, value) {
+                modifiedSurveyList[index].Questions = [];
+                delete value.QID;
+                delete value.choice1_selected;
+                delete value.choice2_selected;
+                delete value.choice3_selected;
+                delete value.choice4_selected;
+                delete value.Ques_Comments;
+            });
+            var modifiedSurveyList = cleanup(modifiedSurveyList, 'Survey_ID');
+
+            $(patientSurveyObject).each(function (index, value) {
+                var response = {};
+                $(modifiedSurveyList).each(function (i, v) {
+                    if (value.Survey_ID === v.Survey_ID) {
+                        response.QID = value.QID;
+                        response.choice1_selected = value.choice1_selected;
+                        response.choice2_selected = value.choice2_selected;
+                        response.choice3_selected = value.choice3_selected;
+                        response.choice4_selected = value.choice4_selected;
+                        (modifiedSurveyList[i].Questions).push(response);
+                    }
+                });
+            });
+
+            $(modifiedSurveyList).each(function (index, value) {
+                    $(".rowData").append("<tr>");
+                    $(".rowData").append("<td>X</td>");
+                    $(".rowData").append("<td>" + (value.Survey_ID) + "</td>");
+                    $(".rowData").append("<td>" + (value.Survey_Time) + "</td>");
+                    $(".rowData").append("<td>Clinic</td>");
+                    $(value.Questions).each(function (i, v) {
+                        
+                        if (totalChoices[i] === 2) {
+                            $(".rowData").append("<td>" + (value.choice1_selected === true ? "true" : "false") + "</td>");
+                        } else if (totalChoices[i] === 3) {
+                            $(".rowData").append("<td>" + (v.choice1_selected) + "</td>");
+                            $(".rowData").append("<td>" + (v.choice2_selected) + "</td>");
+                            $(".rowData").append("<td>" + (v.choice3_selected) + "</td>");
+                        } else if (totalChoices[i] === 4) {
+                            $(".rowData").append("<td>" + (v.choice1_selected) + "</td>");
+                            $(".rowData").append("<td>" + (v.choice2_selected) + "</td>");
+                            $(".rowData").append("<td>" + (v.choice3_selected) + "</td>");
+                            $(".rowData").append("<td>" + (v.choice4_selected) + "</td>");
+                        }
+                    });
+                    $(".rowData").append("</tr>");
+            });
+            console.log('surveyGrid', patientSurveyObject);
+            console.log('modifiedSurveyList11111', modifiedSurveyList);
+        }
+ 
+        function cleanup(arr, prop) {
+            var new_arr = [];
+            var lookup = {};
+
+            for (var i in arr) {
+                lookup[arr[i][prop]] = arr[i];
+            }
+
+            for (i in lookup) {
+                new_arr.push(lookup[i]);
+            }
+
+            return new_arr;
         }
 
         function saveSurvey() {
@@ -2648,13 +2750,11 @@
                 response.QuestionID = $(value).attr("questionID");
 
                 if (response.QuestionID !== undefined) {
-                    //response.selectedAnswerOption = [];
                     response.choice1_selected = 0;
                     response.choice2_selected = 0;
                     response.choice3_selected = 0;
                     response.choice4_selected = 0;
                     $("input:checked", value).each(function () {
-                        //response.selectedAnswerOption.push($(this).attr('answerID'));
                         if ($(this).attr('answerID') === "1") {
                             response.choice1_selected = 1;
                         } else if ($(this).attr('answerID') === "2") {
@@ -2676,10 +2776,6 @@
             finalSurveyOutput = outputString.substring(0, outputString.length - 1)
 
             console.log("Question Response", finalSurveyOutput);
-
-            console.log("EEEEEEEEEEEEEEE", outputString);
-
-
             $(".hdnfldJSONString").html(JSON.stringify(questioResponse));
             __doPostBack('btnSave', finalSurveyOutput);
         }
@@ -2697,6 +2793,8 @@
                     Ques_Text: value.Ques_Text,
                     Ques_Type: value.Ques_Type,
                     Ques_Comments: value.Ques_Comments,
+                    totalNumberOfChoices: (((value.Ques_choice1 !== null) ? 1 : 0) + ((value.Ques_choice2 !== null) ? 1 : 0) +
+                        ((value.Ques_choice3 !== null) ? 1 : 0) + ((value.Ques_choice4 !== null) ? 1 : 0)),
                     AnswerOption: [value.Ques_choice1, value.Ques_choice2,
                         value.Ques_choice3, value.Ques_choice4]
                 });
@@ -2738,9 +2836,7 @@
         function openSurvey() {
             console.log("surveyQuestion", surveyQuestion);
             console.log("modifiedQuestion", modifiedQuestion);
-
             generationOfTemplate(modifiedQuestion);
-
             $("#fotterDiv").css("margin-top", ((100 * $(surveyQuestion).length) + 100));
             $find("mpe").show();
             return false;

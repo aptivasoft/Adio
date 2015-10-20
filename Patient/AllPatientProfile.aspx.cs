@@ -190,14 +190,6 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
         feedback.FacId = Convert.ToInt32(Session["Fat_ID"]);
         feedback.patientId = Convert.ToInt32(Session["Pat_ID"]);
         feedback.SurveyQuestionResponse = surveyQuestionResponse;
-
-
-        //feedback.QID = Convert.ToInt32("33");
-        //feedback.choice1_selected = Convert.ToInt32("1");
-        //feedback.choice2_selected = Convert.ToInt32("1");
-        //feedback.choice3_selected = Convert.ToInt32("0");
-        //feedback.choice4_selected = Convert.ToInt32("1");
-        //feedback.questionComments = "Testing Shomu";
         SurveyQuestions.set_SurveyFeedback(feedback);
     }
 
