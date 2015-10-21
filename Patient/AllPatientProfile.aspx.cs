@@ -49,7 +49,7 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
             if (Request.Params.Get("__EVENTTARGET") == "btnSave")
             {
                 string surveyQuestionResponse = Request.Params.Get("__EVENTARGUMENT");
-                SavePatientFeedBack(surveyQuestionResponse);
+                //SavePatientFeedBack(surveyQuestionResponse);
             }
 
             ShowFeedBack();
@@ -179,18 +179,8 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
     public void ShowFeedBack()
     {
         string JSONObjectSurveyQuestion = SurveyQuestions.surveryQuestion();
-        Page.ClientScript.RegisterStartupScript(this.Page.GetType(), "key", "LoadSurveyJsonObject('" + JSONObjectSurveyQuestion + "');", true);
-    }
-
-    public void SavePatientFeedBack(string surveyQuestionResponse)
-    {
-        FeedBackSurvey feedback = new FeedBackSurvey();
-        feedback.User = (string)Session["User"];
-        feedback.Comments = "";
-        feedback.FacId = Convert.ToInt32(Session["Fat_ID"]);
-        feedback.patientId = Convert.ToInt32(Session["Pat_ID"]);
-        feedback.SurveyQuestionResponse = surveyQuestionResponse;
-        SurveyQuestions.set_SurveyFeedback(feedback);
+        Page.ClientScript.RegisterStartupScript(this.Page.GetType(), "key",
+            "LoadSurveyJsonObject('" + JSONObjectSurveyQuestion + "');", true);
     }
 
     protected void btnSearch_Click(object sender, ImageClickEventArgs e)
@@ -991,8 +981,10 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
                     lblPatAccountName.Text = txtPatientName1.Text;
                     patID = (int)(dtPatientDetails.Rows[0]["Pat_ID"]);
                     Session["Pat_ID"] = patID;
+                    xx_pat_Id.Value = patID.ToString();
                     patFacID = int.Parse(dtPatientDetails.Rows[0]["Facility_ID"].ToString());
                     Session["Fat_ID"] = patFacID;
+                    xx_fat_Id.Value = patFacID.ToString();
 
                     txtCallLogDoctor.Text = dtPatientDetails.Rows[0]["Pat_PDoc"].ToString();
                     lblDoctor1.Text = dtPatientDetails.Rows[0]["Pat_PDoc"].ToString();

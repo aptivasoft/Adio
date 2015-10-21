@@ -25,5 +25,23 @@ public partial class Patient_Default : System.Web.UI.Page
         {
             GetAllSurvey(Request.Params.Get("GetAllSurvey"));
         }
+
+        if (Request.Params.Get("SaveSurvey") != null)
+        {
+            SavePatientFeedBack(Request.QueryString[0], Request.QueryString[1], Request.QueryString[2]);
+        }
+    }
+
+    public void SavePatientFeedBack(string surveyQuestionResponse, string patId, string fatId)
+    {
+        FeedBackSurvey feedback = new FeedBackSurvey();
+        feedback.User = (string)Session["User"];
+        feedback.Comments = "";
+        feedback.FacId = Convert.ToInt32(fatId);
+        feedback.patientId = Convert.ToInt32(patId); 
+        feedback.SurveyQuestionResponse = surveyQuestionResponse;
+        SurveyQuestions.set_SurveyFeedback(feedback);
+
+        Response.End();
     }
 }

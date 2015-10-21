@@ -9,6 +9,8 @@
                 <tr class="medication_info_th1">
                     <td align="center" width="100%" colspan="5">
                         <asp:Label ID="lblTitle" runat="server" Text="PATIENT PROFILE" Font-Bold="True" Font-Size="Medium"></asp:Label>
+                        <input type="hidden" runat="server" id="xx_pat_Id"/>
+                        <input type="hidden" runat="server" id="xx_fat_Id"/>
                     </td>
                 </tr>
                 <tr class="medication_info_tr-even">
@@ -1982,27 +1984,19 @@
                                                 Enabled="True">
                                             </cc1:ModalPopupExtender>
 
-                                            <div id="allSurveyOfPatient" class="surveyH clearfix" style="margin-left: 1px; margin-right: 5px">
-                                                <ul>
-                                                </ul>
-                                            </div>
-
                                             <asp:LinkButton ID="LinkButton1" runat="server" ForeColor="#000066"></asp:LinkButton>
                                             <table style="width:100%" class="surveyTable" border="1">
-                                                 <thead class="rowHeader">
+                                                 <thead id="surveyListHead" class="rowHeader">
                                                     
                                                 </thead>
-                                                <%--<tr >
-                                                    <td>X</td>
-                                                </tr>--%>
-                                                <tbody class="rowData"></tbody>
+                                                <tbody id="surveyListBody" class="rowData"></tbody>
                                             </table>
                                                
                                             
                                             <a href="javascript:void(0);" id="surveyLog" onclick="openSurvey()">Add Survey</a>
 
                                             <asp:Panel ID="surveyDiv" runat="server">
-                                                <div class="modal-dialog" style="width: 1000px !important;">
+                                                <div class="modal-dialog" style="width: 1000px !important; margin-left: 350px">
                                                     <div class="modal-content">
                                                         <div class="row">
                                                             <div class="col-sm-12">
@@ -2623,7 +2617,7 @@
                         <label class="questionOptionLabelCheckBox"></label>
                     </li>
                     <li id="questionOptionLIRadioButton">
-                        <input type="radio" name="answerRadio" class="htmlControl">
+                        <input type="radio" class="htmlControl">
                         <label class="questionOptionLabelRadio"></label>
                     </li>
                 </ul>
@@ -2635,14 +2629,41 @@
 
         $("body").delegate("#surveyHeader", "click", function () {
             $.ajax({
-                url: "default.aspx?GetAllSurvey=30938", cache: false, success: function (result) {
+                url: "default.aspx?GetAllSurvey=" + $("#ctl00_ContentPlaceHolder1_xx_pat_Id").val(), cache: false, success: function (result) {
                     LoadSurveyGrid(result);
                 }
             });
         });
 
+        function getData(dateString) {
+
+            var dateString = dateString;
+            var dx = new Date(parseInt(dateString.substr(6)));
+
+            var dd = dx.getDate();
+            var mm = dx.getMonth() + 1;
+            var yy = dx.getFullYear();
+
+            if (dd <= 9) {
+                dd = "0" + dd;
+            }
+
+            if (mm <= 9) {
+                mm = "0" + mm;
+            }
+
+            var displayDate = dd + "." + mm + "." + yy;
+
+            return displayDate;
+        }
+
         var totalChoices = [];
         function LoadSurveyGrid(data) {
+
+            $("#surveyListHead").empty();
+            $("#surveyListBody").empty();
+
+            totalChoices = [];
             var patientSurveyObject = JSON.parse(data);
             var modifiedSurveyList = JSON.parse(data);
             $(modifiedQuestion).each(function (index, value) {
@@ -2701,12 +2722,12 @@
                     $(".rowData").append("<tr>");
                     $(".rowData").append("<td>X</td>");
                     $(".rowData").append("<td>" + (value.Survey_ID) + "</td>");
-                    $(".rowData").append("<td>" + (value.Survey_Time) + "</td>");
+                    $(".rowData").append("<td>" + getData(value.Survey_Time) + "</td>");
                     $(".rowData").append("<td>Clinic</td>");
                     $(value.Questions).each(function (i, v) {
                         
                         if (totalChoices[i] === 2) {
-                            $(".rowData").append("<td>" + (value.choice1_selected === true ? "true" : "false") + "</td>");
+                            $(".rowData").append("<td>" + (v.choice1_selected === true ? "true" : "false") + "</td>");
                         } else if (totalChoices[i] === 3) {
                             $(".rowData").append("<td>" + (v.choice1_selected) + "</td>");
                             $(".rowData").append("<td>" + (v.choice2_selected) + "</td>");
@@ -2773,11 +2794,21 @@
                 questioResponse.push(response);
             });
 
-            finalSurveyOutput = outputString.substring(0, outputString.length - 1)
+            finalSurveyOutput = outputString.substring(0, outputString.length - 1);
 
             console.log("Question Response", finalSurveyOutput);
             $(".hdnfldJSONString").html(JSON.stringify(questioResponse));
-            __doPostBack('btnSave', finalSurveyOutput);
+
+            $.ajax({
+                url: "default.aspx?SaveSurvey=" + finalSurveyOutput + "&patId=" + $("#ctl00_ContentPlaceHolder1_xx_pat_Id").val() + "&fatId=" + $("#ctl00_ContentPlaceHolder1_xx_fat_Id").val(), cache: false, success: function (result) {
+                    setTimeout(function () {
+                        $("#surveyHeader").trigger("click");
+                        closeSurveyDialog();
+                    }, 2000);
+                }
+            });
+
+            
         }
 
 
@@ -2825,6 +2856,7 @@
                             var newAnswerOption = $("#questionOptionLIRadioButton").clone();
                             $('.htmlControl', newAnswerOption).attr('answerID', i + 1);
                             $('.questionOptionLabelRadio', $(newAnswerOption)).html(v);
+                            $(".htmlControl", $(newAnswerOption))[0].name = index;
                             $('.answerOptions', $(newQuestion)).append(newAnswerOption);
                         }
                     });
