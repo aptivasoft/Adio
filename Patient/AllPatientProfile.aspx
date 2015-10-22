@@ -2658,6 +2658,7 @@
         }
 
         var totalChoices = [];
+        var modifiedSurveyList;
         function LoadSurveyGrid(data) {
 
             $("#surveyListHead").empty();
@@ -2665,7 +2666,7 @@
 
             totalChoices = [];
             var patientSurveyObject = JSON.parse(data);
-            var modifiedSurveyList = JSON.parse(data);
+            modifiedSurveyList = JSON.parse(data);
             $(modifiedQuestion).each(function (index, value) {
                 if (index === 0) {
                     $(".rowHeader").append("<tr>");
@@ -2702,7 +2703,7 @@
                 delete value.choice4_selected;
                 delete value.Ques_Comments;
             });
-            var modifiedSurveyList = cleanup(modifiedSurveyList, 'Survey_ID');
+            modifiedSurveyList = cleanup(modifiedSurveyList, 'Survey_ID');
 
             $(patientSurveyObject).each(function (index, value) {
                 var response = {};
@@ -2713,6 +2714,7 @@
                         response.choice2_selected = value.choice2_selected;
                         response.choice3_selected = value.choice3_selected;
                         response.choice4_selected = value.choice4_selected;
+                        response.Ques_Comments = value.Ques_Comments;
                         (modifiedSurveyList[i].Questions).push(response);
                     }
                 });
@@ -2720,7 +2722,7 @@
 
             $(modifiedSurveyList).each(function (index, value) {
                     $(".rowData").append("<tr>");
-                    $(".rowData").append("<td>X</td>");
+                    $(".rowData").append("<td><a href='javascript:void(0);' id='" + value.Survey_ID + "' onclick='getSurveyAnswerBySurveyId(" + value.Survey_ID + ")'>X</td>");
                     $(".rowData").append("<td>" + (value.Survey_ID) + "</td>");
                     $(".rowData").append("<td>" + getData(value.Survey_Time) + "</td>");
                     $(".rowData").append("<td>Clinic</td>");
@@ -2744,6 +2746,61 @@
             console.log('surveyGrid', patientSurveyObject);
             console.log('modifiedSurveyList11111', modifiedSurveyList);
         }
+
+        function getSurveyAnswerBySurveyId(Survey_ID) {
+            var object = function (SurveyID) {
+                var copy = {};
+                $(modifiedSurveyList).each(function (index, value) {
+                    if (value.Survey_ID === SurveyID) {
+                        copy = value;
+                    }
+                });
+                return copy;
+            }
+            var answerChoosed = object(Survey_ID).Questions;
+            generationOfTemplate(modifiedQuestion);
+            DisplayAnswerOfSurvey(answerChoosed);
+        }
+
+        function DisplayAnswerOfSurvey(answerChoosed) {
+            openSurvey();
+            console.log("PPPPPPPPPPPPPPPPPP", answerChoosed);
+            var surveyUL = $("#surveyUL");
+            $(answerChoosed).each(function (index, value) {
+                $(surveyUL).children("li.surveyQuestions[questionid='" + (value.QID) + "'] ").find(".textAreaQuestion").html(value.Ques_Comments);
+                if (totalChoices[index] === 2) {
+                    $(surveyUL).children("li.surveyQuestions[questionid='" + (value.QID) + "'] ").each(function (i, v) {
+                        if (value.choice1_selected === true) {
+                            $(v).find(".htmlControl[answerid='1']").attr("checked", true);
+                        }
+                        if (value.choice2_selected === true) {
+                            $(v).find(".htmlControl[answerid='2']").attr("checked", true);
+                        }
+                    });
+                }
+
+                if (totalChoices[index] === 3 || totalChoices[index] === 4) {
+                    $(surveyUL).children("li.surveyQuestions[questionid='" + (value.QID) + "'] ").each(function (i, v) {
+                        if (value.choice1_selected === true) {
+                            $(v).find(".htmlControl[answerid='1']").attr("checked", true);
+                        }
+                        if (value.choice2_selected === true) {
+                            $(v).find(".htmlControl[answerid='2']").attr("checked", true);
+                        }
+                        if (value.choice3_selected === true) {
+                            $(v).find(".htmlControl[answerid='3']").attr("checked", true);
+                        }
+                        if (value.choice4_selected === true) {
+                            $(v).find(".htmlControl[answerid='4']").attr("checked", true);
+                        }
+                    
+                    });
+
+                    
+                }
+            });
+        }
+
  
         function cleanup(arr, prop) {
             var new_arr = [];
@@ -2835,6 +2892,7 @@
         }
 
         function generationOfTemplate(modifiedQuestion) {
+            $('ul#surveyUL').empty();
             $(modifiedQuestion).each(function (index, value) {
                 var newQuestion = $("#questionTemplate").clone();
                 $(newQuestion).attr('questionID', value.QID);
@@ -2846,6 +2904,7 @@
                         if (v !== null && v !== undefined) {
                             var newAnswerOption = $("#questionOptionLICheckBox").clone();
                             $('.htmlControl', newAnswerOption).attr('answerID', i + 1);
+                            $(".htmlControl", $(newAnswerOption)).attr('checked', false);
                             $('.questionOptionLabelCheckBox', $(newAnswerOption)).html(v);
                             $('.answerOptions', $(newQuestion)).append(newAnswerOption);
                         }
@@ -2856,6 +2915,7 @@
                             var newAnswerOption = $("#questionOptionLIRadioButton").clone();
                             $('.htmlControl', newAnswerOption).attr('answerID', i + 1);
                             $('.questionOptionLabelRadio', $(newAnswerOption)).html(v);
+                            $(".htmlControl", $(newAnswerOption)).attr('checked', false);
                             $(".htmlControl", $(newAnswerOption))[0].name = index;
                             $('.answerOptions', $(newQuestion)).append(newAnswerOption);
                         }
@@ -2863,6 +2923,8 @@
                 }
                 $("#surveyUL").append(newQuestion);
             });
+           // $("#").children().remove();
+            
         }
 
         function openSurvey() {
