@@ -1997,14 +1997,14 @@
                                             <a href="javascript:void(0);" id="surveyLog" onclick="openSurvey()">Add Survey</a>
 
                                             <asp:Panel ID="surveyDiv" runat="server">
-                                                <div class="modal-dialog" style="width: 1000px !important; margin-left: 350px">
+                                                <div class="modal-dialog" style="margin-left: 350px">
                                                     <div class="modal-content">
                                                         <div class="row">
                                                             <div class="col-sm-12">
                                                                 <div class="surveyH clearfix">
                                                                     <a class="crossBtn glyphicon glyphicon-remove" onclick="closeSurveyDialog()">&nbsp;</a>
                                                                     <h3>SURVEY #33</h3>
-                                                                    <div style="max-height: 600px; overflow-x: hidden !important; overflow-y: scroll;">
+                                                                    <div style="max-height: 600px; overflow-x: hidden !important; overflow-y: scroll; font-size: 11px;">
                                                                         <ul id="surveyUL">
                                                                         </ul>
 
