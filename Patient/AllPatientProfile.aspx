@@ -1992,7 +1992,8 @@
                                                 <tbody id="surveyListBody" class="rowData"></tbody>
                                             </table>
                                                
-                                            
+                                            <br />
+                                            <br />
                                             <a href="javascript:void(0);" id="surveyLog" onclick="openSurvey()">Add Survey</a>
 
                                             <asp:Panel ID="surveyDiv" runat="server">
@@ -2628,11 +2629,17 @@
 
 
         $("body").delegate("#surveyHeader", "click", function () {
-            $.ajax({
-                url: "default.aspx?GetAllSurvey=" + $("#ctl00_ContentPlaceHolder1_xx_pat_Id").val(), cache: false, success: function (result) {
-                    LoadSurveyGrid(result);
-                }
-            });
+
+            setTimeout(function () {
+
+                $.ajax({
+                    url: "default.aspx?GetAllSurvey=" + $("#ContentPlaceHolder1_xx_pat_Id").val(), cache: false, success: function (result) {
+                        LoadSurveyGrid(result);
+                    }
+                });
+
+            }, 2000);
+
         });
 
         function getData(dateString) {
@@ -2721,27 +2728,27 @@
             });
 
             $(modifiedSurveyList).each(function (index, value) {
-                    $(".rowData").append("<tr>");
-                    $(".rowData").append("<td><a href='javascript:void(0);' id='" + value.Survey_ID + "' onclick='getSurveyAnswerBySurveyId(" + value.Survey_ID + ")'>X</td>");
-                    $(".rowData").append("<td>" + (value.Survey_ID) + "</td>");
-                    $(".rowData").append("<td>" + getData(value.Survey_Time) + "</td>");
-                    $(".rowData").append("<td>Clinic</td>");
-                    $(value.Questions).each(function (i, v) {
-                        
-                        if (totalChoices[i] === 2) {
-                            $(".rowData").append("<td>" + (v.choice1_selected === true ? "true" : "false") + "</td>");
-                        } else if (totalChoices[i] === 3) {
-                            $(".rowData").append("<td>" + (v.choice1_selected) + "</td>");
-                            $(".rowData").append("<td>" + (v.choice2_selected) + "</td>");
-                            $(".rowData").append("<td>" + (v.choice3_selected) + "</td>");
-                        } else if (totalChoices[i] === 4) {
-                            $(".rowData").append("<td>" + (v.choice1_selected) + "</td>");
-                            $(".rowData").append("<td>" + (v.choice2_selected) + "</td>");
-                            $(".rowData").append("<td>" + (v.choice3_selected) + "</td>");
-                            $(".rowData").append("<td>" + (v.choice4_selected) + "</td>");
-                        }
-                    });
-                    $(".rowData").append("</tr>");
+                $(".rowData").append("<tr>");
+                $(".rowData").append("<td><a href='javascript:void(0);' id='" + value.Survey_ID + "' onclick='getSurveyAnswerBySurveyId(" + value.Survey_ID + ")'>View</td>");
+                $(".rowData").append("<td>" + (value.Survey_ID) + "</td>");
+                $(".rowData").append("<td>" + getData(value.Survey_Time) + "</td>");
+                $(".rowData").append("<td>Clinic</td>");
+                $(value.Questions).each(function (i, v) {
+
+                    if (totalChoices[i] === 2) {
+                        $(".rowData").append("<td>" + (v.choice1_selected === true ? "true" : "false") + "</td>");
+                    } else if (totalChoices[i] === 3) {
+                        $(".rowData").append("<td>" + (v.choice1_selected) + "</td>");
+                        $(".rowData").append("<td>" + (v.choice2_selected) + "</td>");
+                        $(".rowData").append("<td>" + (v.choice3_selected) + "</td>");
+                    } else if (totalChoices[i] === 4) {
+                        $(".rowData").append("<td>" + (v.choice1_selected) + "</td>");
+                        $(".rowData").append("<td>" + (v.choice2_selected) + "</td>");
+                        $(".rowData").append("<td>" + (v.choice3_selected) + "</td>");
+                        $(".rowData").append("<td>" + (v.choice4_selected) + "</td>");
+                    }
+                });
+                $(".rowData").append("</tr>");
             });
             console.log('surveyGrid', patientSurveyObject);
             console.log('modifiedSurveyList11111', modifiedSurveyList);
@@ -2793,15 +2800,15 @@
                         if (value.choice4_selected === true) {
                             $(v).find(".htmlControl[answerid='4']").attr("checked", true);
                         }
-                    
+
                     });
 
-                    
+
                 }
             });
         }
 
- 
+
         function cleanup(arr, prop) {
             var new_arr = [];
             var lookup = {};
@@ -2857,7 +2864,7 @@
             $(".hdnfldJSONString").html(JSON.stringify(questioResponse));
 
             $.ajax({
-                url: "default.aspx?SaveSurvey=" + finalSurveyOutput + "&patId=" + $("#ctl00_ContentPlaceHolder1_xx_pat_Id").val() + "&fatId=" + $("#ctl00_ContentPlaceHolder1_xx_fat_Id").val(), cache: false, success: function (result) {
+                url: "default.aspx?SaveSurvey=" + finalSurveyOutput + "&patId=" + $("#ContentPlaceHolder1_xx_pat_Id").val() + "&fatId=" + $("#ContentPlaceHolder1_xx_fat_Id").val(), cache: false, success: function (result) {
                     setTimeout(function () {
                         $("#surveyHeader").trigger("click");
                         closeSurveyDialog();
@@ -2865,7 +2872,7 @@
                 }
             });
 
-            
+
         }
 
 
@@ -2923,8 +2930,8 @@
                 }
                 $("#surveyUL").append(newQuestion);
             });
-           // $("#").children().remove();
-            
+            // $("#").children().remove();
+
         }
 
         function openSurvey() {

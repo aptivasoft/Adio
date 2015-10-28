@@ -44,8 +44,8 @@
     <script language="javascript" type = "text/javascript">    
     function AutoCompleteSelected_Facility(source, eventArgs) 
     {
-        var patID1 = document.getElementById('ctl00_ContentPlaceHolder1_btnSearch1');
-        var patID = document.getElementById('ctl00_ContentPlaceHolder1_hf_PatID');
+        var patID1 = document.getElementById('ContentPlaceHolder1_btnSearch1');
+        var patID = document.getElementById('ContentPlaceHolder1_hf_PatID');
         var values = eventArgs.get_value();
         patID.value = values;
             patID1.click();
@@ -53,8 +53,8 @@
 
    function PatSearch(pat_id)
    {
-       var patID1 = document.getElementById('ctl00_ContentPlaceHolder1_btnSearch1');
-       var patID = document.getElementById('ctl00_ContentPlaceHolder1_hf_PatID');
+       var patID1 = document.getElementById('ContentPlaceHolder1_btnSearch1');
+       var patID = document.getElementById('ContentPlaceHolder1_hf_PatID');
        // var values = eventArgs.get_value();
        patID.value = pat_id;
        patID1.click();
@@ -62,20 +62,20 @@
    
     function AutoCompleteSelected_Patient(source, eventArgs) 
     {
-            var patID = document.getElementById('ctl00_ContentPlaceHolder1_hidPatID');
+            var patID = document.getElementById('ContentPlaceHolder1_hidPatID');
             var values = eventArgs.get_value();
             var val = new Array();
             val = values.split(',');
             patID.value = val[0];
 
-            var patPhone = document.getElementById('ctl00_ContentPlaceHolder1_txtPatContact');
+            var patPhone = document.getElementById('ContentPlaceHolder1_txtPatContact');
             patPhone.value = val[1];
-            document.getElementById('ctl00_ContentPlaceHolder1_txtDocName').value = '';
+            document.getElementById('ContentPlaceHolder1_txtDocName').value = '';
             $find('acCustodianEx1').set_contextKey(val[2]);
      }
      function AutoCompleteSelected_Doctor(source, eventArgs) 
      {
-            var DocID = document.getElementById('ctl00_ContentPlaceHolder1_hidDocID');
+            var DocID = document.getElementById('ContentPlaceHolder1_hidDocID');
             var values = eventArgs.get_value();
             DocID.value = values;
      }
