@@ -2003,7 +2003,7 @@
                                                             <div class="col-sm-12">
                                                                 <div class="surveyH clearfix">
                                                                     <a class="crossBtn glyphicon glyphicon-remove" onclick="closeSurveyDialog()">&nbsp;</a>
-                                                                    <h3>SURVEY #33</h3>
+                                                                    <h3 class="surveyHeaderTitle"></h3>
                                                                     <div style="max-height: 600px; overflow-x: hidden !important; overflow-y: scroll; font-size: 11px;">
                                                                         <ul id="surveyUL">
                                                                         </ul>
@@ -2627,7 +2627,7 @@
     </table>
     <script language="javascript" type="text/javascript">
 
-
+        var surveyCount;
         $("body").delegate("#surveyHeader", "click", function () {
 
             setTimeout(function () {
@@ -2667,7 +2667,7 @@
         var totalChoices = [];
         var modifiedSurveyList;
         function LoadSurveyGrid(data) {
-
+            surveyCount = 0;
             $("#surveyListHead").empty();
             $("#surveyListBody").empty();
 
@@ -2729,7 +2729,7 @@
 
             $(modifiedSurveyList).each(function (index, value) {
                 $(".rowData").append("<tr>");
-                $(".rowData").append("<td><a href='javascript:void(0);' id='" + value.Survey_ID + "' onclick='getSurveyAnswerBySurveyId(" + value.Survey_ID + ")'>View</td>");
+                $(".rowData").append("<td><a href='javascript:void(0);' id='" + value.Survey_ID + "' onclick='getSurveyAnswerBySurveyId(" + value.Survey_ID + ", " + index + ")'>View</td>");
                 $(".rowData").append("<td>" + (value.Survey_ID) + "</td>");
                 $(".rowData").append("<td>" + getData(value.Survey_Time) + "</td>");
                 $(".rowData").append("<td>Clinic</td>");
@@ -2749,12 +2749,13 @@
                     }
                 });
                 $(".rowData").append("</tr>");
+                surveyCount = index;
             });
             console.log('surveyGrid', patientSurveyObject);
             console.log('modifiedSurveyList11111', modifiedSurveyList);
         }
 
-        function getSurveyAnswerBySurveyId(Survey_ID) {
+        function getSurveyAnswerBySurveyId(Survey_ID, Surveyindex) {
             var object = function (SurveyID) {
                 var copy = {};
                 $(modifiedSurveyList).each(function (index, value) {
@@ -2766,13 +2767,14 @@
             }
             var answerChoosed = object(Survey_ID).Questions;
             generationOfTemplate(modifiedQuestion);
-            DisplayAnswerOfSurvey(answerChoosed);
+            DisplayAnswerOfSurvey(answerChoosed, Surveyindex);
         }
 
-        function DisplayAnswerOfSurvey(answerChoosed) {
+        function DisplayAnswerOfSurvey(answerChoosed, Surveyindex) {
             openSurvey();
             console.log("PPPPPPPPPPPPPPPPPP", answerChoosed);
             var surveyUL = $("#surveyUL");
+            $(".surveyHeaderTitle").html("Survey #" + (Surveyindex + 1));
             $(answerChoosed).each(function (index, value) {
                 $(surveyUL).children("li.surveyQuestions[questionid='" + (value.QID) + "'] ").find(".textAreaQuestion").html(value.Ques_Comments);
                 if (totalChoices[index] === 2) {
@@ -2935,6 +2937,7 @@
         }
 
         function openSurvey() {
+            $(".surveyHeaderTitle").html("Survey #" + ((surveyCount == 0) ? 1 : (surveyCount + 2)));
             console.log("surveyQuestion", surveyQuestion);
             console.log("modifiedQuestion", modifiedQuestion);
             generationOfTemplate(modifiedQuestion);
