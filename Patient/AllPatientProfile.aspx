@@ -1985,11 +1985,11 @@
                                             </cc1:ModalPopupExtender>
 
                                             <asp:LinkButton ID="LinkButton1" runat="server" ForeColor="#000066"></asp:LinkButton>
-                                            <table style="width:100%" class="surveyTable" border="1">
-                                                 <thead id="surveyListHead" class="rowHeader">
+                                            <table style="width:100%" class="surveyTable" border="1" style="font-family: verdana,tahoma,helvetica;font-size: 10pt;">
+                                                 <thead id="surveyListHead" class="rowHeader" style="background: #4f81bc;font-size: 12px;color: #FFFFFF;">
                                                     
                                                 </thead>
-                                                <tbody id="surveyListBody" class="rowData"></tbody>
+                                                <tbody id="surveyListBody" class="rowData" style="border: 1px solid #FFFFFF;background-color: #d6e3ec;font-size: 11px;color: #336600;"></tbody>
                                             </table>
                                                
                                             <br />
@@ -2659,7 +2659,7 @@
                 mm = "0" + mm;
             }
 
-            var displayDate = dd + "." + mm + "." + yy;
+            var displayDate = mm + "/" + dd + "/" + yy;
 
             return displayDate;
         }
@@ -2677,7 +2677,7 @@
             $(modifiedQuestion).each(function (index, value) {
                 if (index === 0) {
                     $(".rowHeader").append("<tr>");
-                    $(".rowHeader").append("<th>D</th>");
+                    $(".rowHeader").append("<th></th>");
                     $(".rowHeader").append("<th>#</th>");
                     $(".rowHeader").append("<th>Data/Time</th>");
                     $(".rowHeader").append("<th>Clinic</th>");
@@ -2729,23 +2729,23 @@
 
             $(modifiedSurveyList).each(function (index, value) {
                 $(".rowData").append("<tr>");
-                $(".rowData").append("<td><a href='javascript:void(0);' id='" + value.Survey_ID + "' onclick='getSurveyAnswerBySurveyId(" + value.Survey_ID + ", " + index + ")'>View</td>");
+                $(".rowData").append("<td><a href='javascript:void(0);' id='" + value.Survey_ID + "' onclick='getSurveyAnswerBySurveyId(" + value.Survey_ID + ", " + index + ")'><span class='searchIcon'>&nbsp;</span><a href='#'><span class='crossBtn'>&nbsp;</span></a></td>");
                 $(".rowData").append("<td>" + (value.Survey_ID) + "</td>");
                 $(".rowData").append("<td>" + getData(value.Survey_Time) + "</td>");
                 $(".rowData").append("<td>Clinic</td>");
                 $(value.Questions).each(function (i, v) {
 
                     if (totalChoices[i] === 2) {
-                        $(".rowData").append("<td>" + (v.choice1_selected === true ? "true" : "false") + "</td>");
+                        $(".rowData").append("<td>" + (v.choice1_selected === true ? "<span class='writeIcon'>&nbsp;</span>" : "<span class='crossIcon'>&nbsp;</span>") + "</td>");
                     } else if (totalChoices[i] === 3) {
-                        $(".rowData").append("<td>" + (v.choice1_selected) + "</td>");
-                        $(".rowData").append("<td>" + (v.choice2_selected) + "</td>");
-                        $(".rowData").append("<td>" + (v.choice3_selected) + "</td>");
+                        $(".rowData").append("<td>" + (v.choice1_selected === true ? "<span class='writeIcon'>&nbsp;</span>" : "<span class='crossIcon'>&nbsp;</span>") + "</td>");
+                        $(".rowData").append("<td>" + (v.choice2_selected === true ? "<span class='writeIcon'>&nbsp;</span>" : "<span class='crossIcon'>&nbsp;</span>") + "</td>");
+                        $(".rowData").append("<td>" + (v.choice3_selected === true ? "<span class='writeIcon'>&nbsp;</span>" : "<span class='crossIcon'>&nbsp;</span>") + "</td>");
                     } else if (totalChoices[i] === 4) {
-                        $(".rowData").append("<td>" + (v.choice1_selected) + "</td>");
-                        $(".rowData").append("<td>" + (v.choice2_selected) + "</td>");
-                        $(".rowData").append("<td>" + (v.choice3_selected) + "</td>");
-                        $(".rowData").append("<td>" + (v.choice4_selected) + "</td>");
+                        $(".rowData").append("<td>" + (v.choice1_selected === true ? "<span class='writeIcon'>&nbsp;</span>" : "<span class='crossIcon'>&nbsp;</span>") + "</td>");
+                        $(".rowData").append("<td>" + (v.choice2_selected === true ? "<span class='writeIcon'>&nbsp;</span>" : "<span class='crossIcon'>&nbsp;</span>") + "</td>");
+                        $(".rowData").append("<td>" + (v.choice3_selected === true ? "<span class='writeIcon'>&nbsp;</span>" : "<span class='crossIcon'>&nbsp;</span>") + "</td>");
+                        $(".rowData").append("<td>" + (v.choice4_selected === true ? "<span class='writeIcon'>&nbsp;</span>" : "<span class='crossIcon'>&nbsp;</span>") + "</td>");
                     }
                 });
                 $(".rowData").append("</tr>");

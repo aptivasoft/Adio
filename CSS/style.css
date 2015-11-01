@@ -8,6 +8,11 @@ background-color: #b5d1e8;
 font-size:10px; font-family : Arial, Helvetica, Verdana, sans-serif; 
 color: #000000 } 
 
+.crossIcon      {display:inline-block; width:16px; height:16px; background:url("../images/crossIcons.png") no-repeat;}
+.searchIcon     {display:inline-block; width:16px; height:16px; background:url("../images/searchIcons.png") no-repeat;}
+.writeIcon      {display:inline-block; width:16px; height:16px; background:url("../images/trueIcons.png") no-repeat;}
+.crossBtn       {display:inline-block; width:16px; height:16px; background:url("../images/crossBtn.png") no-repeat;}
+
 .span {
   color: #000000;
   font-family:arial;
