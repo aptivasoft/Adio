@@ -2650,6 +2650,9 @@
             var dd = dx.getDate();
             var mm = dx.getMonth() + 1;
             var yy = dx.getFullYear();
+            var hh = "" + ((dx.getHours() > 12) ? ((dx.getHours()) - 12) : dx.getHours());
+            var MM = "" + dx.getMinutes();
+            var convertion = ((dx.getHours()) >= 12) ? 'PM' : 'AM';
 
             if (dd <= 9) {
                 dd = "0" + dd;
@@ -2659,11 +2662,9 @@
                 mm = "0" + mm;
             }
 
-            var displayDate = mm + "/" + dd + "/" + yy;
-
+            var displayDate = mm + "/" + dd + "/" + yy + " " + ((hh.length > 1) ? hh : ("0" + hh)) + ":" + ((MM.length) > 1 ? MM : ("0" + MM)) + " " + convertion;
             return displayDate;
         }
-
         var totalChoices = [];
         var modifiedSurveyList;
         function LoadSurveyGrid(data) {
