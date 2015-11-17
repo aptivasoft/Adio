@@ -41,27 +41,24 @@
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script> 
     
-    <script language="javascript" type = "text/javascript">    
-    function AutoCompleteSelected_Facility(source, eventArgs) 
-    {
-        var patID1 = document.getElementById('ContentPlaceHolder1_btnSearch1');
-        var patID = document.getElementById('ContentPlaceHolder1_hf_PatID');
-        var values = eventArgs.get_value();
-        patID.value = values;
+    <script language="javascript" type = "text/javascript">
+        function AutoCompleteSelected_Facility(source, eventArgs) {
+            var patID1 = document.getElementById('ContentPlaceHolder1_btnSearch1');
+            var patID = document.getElementById('ContentPlaceHolder1_hf_PatID');
+            var values = eventArgs.get_value();
+            patID.value = values;
             patID1.click();
-    }
+        }
 
-   function PatSearch(pat_id)
-   {
-       var patID1 = document.getElementById('ContentPlaceHolder1_btnSearch1');
-       var patID = document.getElementById('ContentPlaceHolder1_hf_PatID');
-       // var values = eventArgs.get_value();
-       patID.value = pat_id;
-       patID1.click();
-   }
-   
-    function AutoCompleteSelected_Patient(source, eventArgs) 
-    {
+        function PatSearch(pat_id) {
+            var patID1 = document.getElementById('ContentPlaceHolder1_btnSearch1');
+            var patID = document.getElementById('ContentPlaceHolder1_hf_PatID');
+            // var values = eventArgs.get_value();
+            patID.value = pat_id;
+            patID1.click();
+        }
+
+        function AutoCompleteSelected_Patient(source, eventArgs) {
             var patID = document.getElementById('ContentPlaceHolder1_hidPatID');
             var values = eventArgs.get_value();
             var val = new Array();
@@ -72,42 +69,39 @@
             patPhone.value = val[1];
             document.getElementById('ContentPlaceHolder1_txtDocName').value = '';
             $find('acCustodianEx1').set_contextKey(val[2]);
-     }
-     function AutoCompleteSelected_Doctor(source, eventArgs) 
-     {
+        }
+        function AutoCompleteSelected_Doctor(source, eventArgs) {
             var DocID = document.getElementById('ContentPlaceHolder1_hidDocID');
             var values = eventArgs.get_value();
             DocID.value = values;
-     }
-//     function updateClock() 
-//     {
-//            var currentTime = new Date();
-//            var todayDate = currentTime.format("MM/dd/yyyy");
-//            var currentHours = currentTime.getHours();
-//            var currentMinutes = currentTime.getMinutes();
-//            var currentSeconds = currentTime.getSeconds();
-//            currentMinutes = (currentMinutes < 10 ? "0" : "") + currentMinutes;
-//            currentSeconds = (currentSeconds < 10 ? "0" : "") + currentSeconds;
-//            var timeOfDay = (currentHours < 12) ? "AM" : "PM";
-//            currentHours = (currentHours > 12) ? currentHours - 12 : currentHours;
-//            currentHours = (currentHours == 0) ? 12 : currentHours;
-//            var currentDateString = todayDate;  
-//            var currentTimeString = currentHours + ":" + currentMinutes + ":" + currentSeconds + " " + timeOfDay;
-//            document.getElementById("spnDate").innerHTML = currentDateString;
-//            document.getElementById("spnTime").innerHTML = currentTimeString;
-//        }
-     function GotoPage() 
-     {
+        }
+        //     function updateClock() 
+        //     {
+        //            var currentTime = new Date();
+        //            var todayDate = currentTime.format("MM/dd/yyyy");
+        //            var currentHours = currentTime.getHours();
+        //            var currentMinutes = currentTime.getMinutes();
+        //            var currentSeconds = currentTime.getSeconds();
+        //            currentMinutes = (currentMinutes < 10 ? "0" : "") + currentMinutes;
+        //            currentSeconds = (currentSeconds < 10 ? "0" : "") + currentSeconds;
+        //            var timeOfDay = (currentHours < 12) ? "AM" : "PM";
+        //            currentHours = (currentHours > 12) ? currentHours - 12 : currentHours;
+        //            currentHours = (currentHours == 0) ? 12 : currentHours;
+        //            var currentDateString = todayDate;  
+        //            var currentTimeString = currentHours + ":" + currentMinutes + ":" + currentSeconds + " " + timeOfDay;
+        //            document.getElementById("spnDate").innerHTML = currentDateString;
+        //            document.getElementById("spnTime").innerHTML = currentTimeString;
+        //        }
+        function GotoPage() {
             window.history.go(-1);
 
-      }
-     function Logout() 
-     {
-            if (confirm('Are you sure, Do you want to Logout?')) 
+        }
+        function Logout() {
+            if (confirm('Are you sure, Do you want to Logout?'))
                 return true;
-           else 
+            else
                 return false;
-     }
+        }
 
     </script>
     
@@ -221,6 +215,7 @@
 <a href="../Activities/RxInventory.aspx">Rx Inventory</a>
 <a href="../Activities/RxQueue.aspx" id="hrefRxQueue" runat="server">Rx Queue</a>
 <a href="../Activities/SampleLog.aspx">Sample Log</a>
+    <a href="../Reports/ReportTrouble.aspx" id="A2" runat="server">Troubled Patients List</a>
 <a href="../Stamp/DeliveryTracking.aspx" id="hrefTrackStamp" runat="server">Ship Tracking</a>
 </div>
 
@@ -243,6 +238,7 @@
 <a href="../Reports/Rx30RxLog.aspx" id="hrefRx30RxLog" runat="server">Rx30 Rx Log</a>
 <a href="../Reports/ReportSample.aspx" id="hrefSamples" runat="server">Samples</a>
 <a href="../Reports/ReportSampleLog.aspx" id="A1" runat="server">Samples Inventory</a>
+    
 <a href="../Reports/ReportTimesheet.aspx" id="hrefTS" runat="server" >Timesheet</a>
 <%-- <a href="../Reports/ReportRx30.aspx">Rx30 Data</a>--%>
  </li>
@@ -292,22 +288,21 @@
     cssdropdown.startchrome("chromemenu")
     function CalculateTotal() {
         // Your logic here please. :)
-        var sum=0;
+        var sum = 0;
         var Max = 0;
         var tfield;
         var inputs = document.documentElement.getElementsByTagName('input');
         sum = 0
         for (var i = 2; i < 10; i++) {
-            tfield=document.getElementById('ctl00_ContentPlaceHolder1_gridTimeSheetList_ctl0' + i +'_txtHours');
-            if(tfield!=null)
-            {
+            tfield = document.getElementById('ctl00_ContentPlaceHolder1_gridTimeSheetList_ctl0' + i + '_txtHours');
+            if (tfield != null) {
                 Max = tfield.value;
-           if(!isNaN(Max))
-                
-                sum = sum + Max * 1; // multiply to preven string concatenation.
-                }
+                if (!isNaN(Max))
+
+                    sum = sum + Max * 1; // multiply to preven string concatenation.
             }
-        for ( i = 10; i < 16; i++) {
+        }
+        for (i = 10; i < 16; i++) {
 
             tfield = document.getElementById('ctl00_ContentPlaceHolder1_gridTimeSheetList_ctl' + i + '_txtHours');
             if (tfield != null) {
@@ -316,9 +311,9 @@
 
                     sum = sum + Max * 1; // multiply to preven string concatenation.
             }
- }
- document.getElementById('ctl00_ContentPlaceHolder1_gridTimeSheetList_ctl16_txtTHours').value = sum;
-}
+        }
+        document.getElementById('ctl00_ContentPlaceHolder1_gridTimeSheetList_ctl16_txtTHours').value = sum;
+    }
 </script>
 </form>
 </body>

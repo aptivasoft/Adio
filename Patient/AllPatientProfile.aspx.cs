@@ -44,12 +44,11 @@ public partial class Patient_PatientProfile : System.Web.UI.Page
     {
         try
         {
-           
 
+            
             if (Request.Params.Get("__EVENTTARGET") == "btnSave")
             {
                 string surveyQuestionResponse = Request.Params.Get("__EVENTARGUMENT");
-                //SavePatientFeedBack(surveyQuestionResponse);
             }
 
             ShowFeedBack();

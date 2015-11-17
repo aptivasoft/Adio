@@ -26,6 +26,12 @@ public partial class Patient_Default : System.Web.UI.Page
             GetAllSurvey(Request.Params.Get("GetAllSurvey"));
         }
 
+        if (Request.Params.Get("deleteSurveyId") != null)
+        {
+            DeleteSurveyById(Request.Params.Get("deleteSurveyId"));
+        }
+
+
         if (Request.Params.Get("SaveSurvey") != null)
         {
             SavePatientFeedBack(Request.QueryString[0], Request.QueryString[1], Request.QueryString[2]);
@@ -41,6 +47,13 @@ public partial class Patient_Default : System.Web.UI.Page
         feedback.patientId = Convert.ToInt32(patId); 
         feedback.SurveyQuestionResponse = surveyQuestionResponse;
         SurveyQuestions.set_SurveyFeedback(feedback);
+
+        Response.End();
+    }
+
+    public void DeleteSurveyById(string surveyId)
+    {
+        SurveyQuestions.deleteSurvey(Convert.ToInt32(surveyId));
 
         Response.End();
     }

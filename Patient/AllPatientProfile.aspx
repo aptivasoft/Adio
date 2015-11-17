@@ -2002,9 +2002,9 @@
                                                         <div class="row">
                                                             <div class="col-sm-12">
                                                                 <div class="surveyH clearfix">
-                                                                    <a class="crossBtn glyphicon glyphicon-remove" onclick="closeSurveyDialog()">&nbsp;</a>
+                                                                    <a class="crossBtn glyphicon glyphicon-remove" onclick="closeSurveyDialog()" style="right: 10px">&nbsp;</a>
                                                                     <h3 class="surveyHeaderTitle"></h3>
-                                                                    <div style="max-height: 600px; overflow-x: hidden !important; overflow-y: scroll; font-size: 11px;">
+                                                                    <div style="max-height: 300px; overflow-x: hidden !important; overflow-y: scroll; font-size: 11px;">
                                                                         <ul id="surveyUL">
                                                                         </ul>
 
@@ -2629,17 +2629,13 @@
 
         var surveyCount;
         $("body").delegate("#surveyHeader", "click", function () {
-
             setTimeout(function () {
-
                 $.ajax({
                     url: "default.aspx?GetAllSurvey=" + $("#ContentPlaceHolder1_xx_pat_Id").val(), cache: false, success: function (result) {
                         LoadSurveyGrid(result);
                     }
                 });
-
             }, 2000);
-
         });
 
         function getData(dateString) {
@@ -2665,6 +2661,7 @@
             var displayDate = mm + "/" + dd + "/" + yy + " " + ((hh.length > 1) ? hh : ("0" + hh)) + ":" + ((MM.length) > 1 ? MM : ("0" + MM)) + " " + convertion;
             return displayDate;
         }
+
         var totalChoices = [];
         var modifiedSurveyList;
         function LoadSurveyGrid(data) {
@@ -2728,25 +2725,27 @@
                 });
             });
 
-            $(modifiedSurveyList).each(function (index, value) {
+            var reverseModifiedList = modifiedSurveyList.reverse()
+            
+            $(reverseModifiedList).each(function (index, value) {
                 $(".rowData").append("<tr>");
-                $(".rowData").append("<td><a href='javascript:void(0);' id='" + value.Survey_ID + "' onclick='getSurveyAnswerBySurveyId(" + value.Survey_ID + ", " + index + ")'><span class='searchIcon'>&nbsp;</span><a href='#'><span class='crossBtn'>&nbsp;</span></a></td>");
+                $(".rowData").append("<td style='text-align: center;'><a href='javascript:void(0);' id='" + value.Survey_ID + "' onclick='getSurveyAnswerBySurveyId(" + value.Survey_ID + ", " + index + ")'><span class='searchIcon'>&nbsp;</span><a href='#' surveyId='" + value.Survey_ID + "' onClick='deleteSurvey(this)'><span class='crossBtn'>&nbsp;</span></a></td>");
                 $(".rowData").append("<td>" + (value.Survey_ID) + "</td>");
                 $(".rowData").append("<td>" + getData(value.Survey_Time) + "</td>");
-                $(".rowData").append("<td>Clinic</td>");
+                $(".rowData").append("<td>" + value.Clinic + "</td>");
                 $(value.Questions).each(function (i, v) {
 
                     if (totalChoices[i] === 2) {
-                        $(".rowData").append("<td>" + (v.choice1_selected === true ? "<span class='writeIcon'>&nbsp;</span>" : "<span class='crossIcon'>&nbsp;</span>") + "</td>");
+                        $(".rowData").append("<td style='text-align: center;'>" + (v.choice1_selected === true ? "<span class='writeIcon'>&nbsp;</span>" : "<span class='crossIcon'>&nbsp;</span>") + "</td>");
                     } else if (totalChoices[i] === 3) {
-                        $(".rowData").append("<td>" + (v.choice1_selected === true ? "<span class='writeIcon'>&nbsp;</span>" : "<span class='crossIcon'>&nbsp;</span>") + "</td>");
-                        $(".rowData").append("<td>" + (v.choice2_selected === true ? "<span class='writeIcon'>&nbsp;</span>" : "<span class='crossIcon'>&nbsp;</span>") + "</td>");
-                        $(".rowData").append("<td>" + (v.choice3_selected === true ? "<span class='writeIcon'>&nbsp;</span>" : "<span class='crossIcon'>&nbsp;</span>") + "</td>");
+                        $(".rowData").append("<td style='text-align: center;'>" + (v.choice1_selected === true ? "<span class='writeIcon'>&nbsp;</span>" : "<span class='crossIcon'>&nbsp;</span>") + "</td>");
+                        $(".rowData").append("<td style='text-align: center;'>" + (v.choice2_selected === true ? "<span class='writeIcon'>&nbsp;</span>" : "<span class='crossIcon'>&nbsp;</span>") + "</td>");
+                        $(".rowData").append("<td style='text-align: center;'>" + (v.choice3_selected === true ? "<span class='writeIcon'>&nbsp;</span>" : "<span class='crossIcon'>&nbsp;</span>") + "</td>");
                     } else if (totalChoices[i] === 4) {
-                        $(".rowData").append("<td>" + (v.choice1_selected === true ? "<span class='writeIcon'>&nbsp;</span>" : "<span class='crossIcon'>&nbsp;</span>") + "</td>");
-                        $(".rowData").append("<td>" + (v.choice2_selected === true ? "<span class='writeIcon'>&nbsp;</span>" : "<span class='crossIcon'>&nbsp;</span>") + "</td>");
-                        $(".rowData").append("<td>" + (v.choice3_selected === true ? "<span class='writeIcon'>&nbsp;</span>" : "<span class='crossIcon'>&nbsp;</span>") + "</td>");
-                        $(".rowData").append("<td>" + (v.choice4_selected === true ? "<span class='writeIcon'>&nbsp;</span>" : "<span class='crossIcon'>&nbsp;</span>") + "</td>");
+                        $(".rowData").append("<td style='text-align: center;'>" + (v.choice1_selected === true ? "<span class='writeIcon'>&nbsp;</span>" : "<span class='crossIcon'>&nbsp;</span>") + "</td>");
+                        $(".rowData").append("<td style='text-align: center;'>" + (v.choice2_selected === true ? "<span class='writeIcon'>&nbsp;</span>" : "<span class='crossIcon'>&nbsp;</span>") + "</td>");
+                        $(".rowData").append("<td style='text-align: center;'>" + (v.choice3_selected === true ? "<span class='writeIcon'>&nbsp;</span>" : "<span class='crossIcon'>&nbsp;</span>") + "</td>");
+                        $(".rowData").append("<td style='text-align: center;'>" + (v.choice4_selected === true ? "<span class='writeIcon'>&nbsp;</span>" : "<span class='crossIcon'>&nbsp;</span>") + "</td>");
                     }
                 });
                 $(".rowData").append("</tr>");
@@ -2754,6 +2753,22 @@
             });
             console.log('surveyGrid', patientSurveyObject);
             console.log('modifiedSurveyList11111', modifiedSurveyList);
+        }
+
+        function deleteSurvey(value) {
+            var deleteSurveyId = $(value).attr("surveyId");
+            if (confirm('Are you sure, You want to delete?')) {
+                $.ajax({
+                    url: "default.aspx?deleteSurveyId=" + deleteSurveyId, cache: false, success: function (result) {
+                        setTimeout(function () {
+                            $("#surveyHeader").trigger("click");
+                            closeSurveyDialog();
+                        }, 2000);
+                    }
+                });
+            } else {
+                return false;
+            }
         }
 
         function getSurveyAnswerBySurveyId(Survey_ID, Surveyindex) {
@@ -2773,6 +2788,7 @@
 
         function DisplayAnswerOfSurvey(answerChoosed, Surveyindex) {
             openSurvey();
+            $(".btnH").hide();
             console.log("PPPPPPPPPPPPPPPPPP", answerChoosed);
             var surveyUL = $("#surveyUL");
             $(".surveyHeaderTitle").html("Survey #" + (Surveyindex + 1));
@@ -2781,10 +2797,10 @@
                 if (totalChoices[index] === 2) {
                     $(surveyUL).children("li.surveyQuestions[questionid='" + (value.QID) + "'] ").each(function (i, v) {
                         if (value.choice1_selected === true) {
-                            $(v).find(".htmlControl[answerid='1']").attr("checked", true);
+                            $(v).find(".htmlControl[answerid='1']").prop("checked", true);
                         }
                         if (value.choice2_selected === true) {
-                            $(v).find(".htmlControl[answerid='2']").attr("checked", true);
+                            $(v).find(".htmlControl[answerid='2']").prop("checked", true);
                         }
                     });
                 }
@@ -2792,16 +2808,16 @@
                 if (totalChoices[index] === 3 || totalChoices[index] === 4) {
                     $(surveyUL).children("li.surveyQuestions[questionid='" + (value.QID) + "'] ").each(function (i, v) {
                         if (value.choice1_selected === true) {
-                            $(v).find(".htmlControl[answerid='1']").attr("checked", true);
+                            $(v).find(".htmlControl[answerid='1']").prop("checked", true);
                         }
                         if (value.choice2_selected === true) {
-                            $(v).find(".htmlControl[answerid='2']").attr("checked", true);
+                            $(v).find(".htmlControl[answerid='2']").prop("checked", true);
                         }
                         if (value.choice3_selected === true) {
-                            $(v).find(".htmlControl[answerid='3']").attr("checked", true);
+                            $(v).find(".htmlControl[answerid='3']").prop("checked", true);
                         }
                         if (value.choice4_selected === true) {
-                            $(v).find(".htmlControl[answerid='4']").attr("checked", true);
+                            $(v).find(".htmlControl[answerid='4']").prop("checked", true);
                         }
 
                     });
@@ -2938,6 +2954,7 @@
         }
 
         function openSurvey() {
+            $(".btnH").show();
             $(".surveyHeaderTitle").html("Survey #" + ((surveyCount == 0) ? 1 : (surveyCount + 2)));
             console.log("surveyQuestion", surveyQuestion);
             console.log("modifiedQuestion", modifiedQuestion);

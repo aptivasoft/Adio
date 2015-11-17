@@ -41,6 +41,47 @@ public class SurveyQuestions
         return DataTableToJsonWithJavaScriptSerializer(get_SurveyQuestionsDataTable());
     }
 
+    public static void saveReportComments(int SurveyID, char FollowupStatus, string SurveyComments) 
+    { 
+        //sp_Update_SurveyFlag
+
+        SqlConnection sqlCon = new SqlConnection(conStr);
+
+        SqlCommand sqlCmd = new SqlCommand("sp_Update_SurveyFlag", sqlCon);
+        sqlCmd.CommandType = CommandType.StoredProcedure;
+
+        SqlParameter Report_Id = sqlCmd.Parameters.Add("@SurveyID", SqlDbType.Int);
+        Report_Id.Value = SurveyID;
+
+        SqlParameter Report_FollowupStatus = sqlCmd.Parameters.Add("@FollowupStatus", SqlDbType.Char);
+        Report_FollowupStatus.Value = '9';
+
+        SqlParameter Report_SurveyComments = sqlCmd.Parameters.Add("@SurveyComments", SqlDbType.Text);
+        Report_SurveyComments.Value = SurveyComments;
+
+        sqlCon.Open();
+        sqlCmd.ExecuteNonQuery();
+        sqlCon.Close();
+
+
+
+    }
+
+    public static void deleteSurvey(int SurveyId) 
+    {
+        SqlConnection sqlCon = new SqlConnection(conStr);
+
+        SqlCommand sqlCmd = new SqlCommand("sp_Delete_Pat_Survey", sqlCon);
+        sqlCmd.CommandType = CommandType.StoredProcedure;
+
+        SqlParameter survey_Id = sqlCmd.Parameters.Add("@SurveyID", SqlDbType.Int);
+        survey_Id.Value = SurveyId;
+        sqlCon.Open();
+        sqlCmd.ExecuteNonQuery();
+        sqlCon.Close();
+    }
+
+
     public static string get_Survey(string patId)
     {
         DataTable dtQuestionSurvey = new DataTable();
@@ -78,6 +119,35 @@ public class SurveyQuestions
         }
         return dtQuestionSurvey;
     }
+
+    public static DataTable get_ReportDataTable(int ClinicID, int FacilityID)
+    {
+        DataTable dtReport = new DataTable();
+        string insertCommand = "USE [eCareXDB]" +
+                                " DECLARE @return_value int" +
+                                " EXEC @return_value = [dbo].[sp_getPatSurveyList]" +
+                                  " @Clinic_ID = " + ClinicID + "," +
+                                  " @facility_ID = " + FacilityID + "," +
+                                  " @FollowupStatus = N'1' " +
+                                  " SELECT 'Return Value' = @return_value";
+
+
+        try
+        {
+            SqlConnection sqlCon = new SqlConnection(conStr);
+            SqlCommand cmd = new SqlCommand(insertCommand, sqlCon);
+            sqlCon.Open();
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            da.Fill(dtReport);
+            sqlCon.Close();
+        }
+        catch (Exception e)
+        {
+        }
+        return dtReport;
+    }
+
+
 
 
     public static void set_SurveyFeedback(FeedBackSurvey feedback)
